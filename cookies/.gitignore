@@ -1,0 +1,9 @@
+# ملفات الكوكيز - لا تشاركها أبداً
+*.txt
+*.cookies
+*.jar
+*.json
+
+# استثناء ملف README
+!README.md
+!.gitignore

@@ -35,7 +35,7 @@ from config import *
 import numpy as np
 from yt_dlp import YoutubeDL
 from pytube import YouTube
-from config import user, dev, call, logger, logger_mode, botname, appp
+from config import user, dev, call, logger, logger_mode, botname, appp, YOUTUBE_COOKIES_FILE
 from bot import OWNER_ID
 from CASERr.daty import get_call, get_userbot, get_dev, get_logger, del_userbot, del_call, get_devss
 from pyrogram import Client
@@ -96,7 +96,7 @@ async def pphoto(client, message, mi, user_mention, count):
     opts = {
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
         "quiet": True,
-        "cookiefile": "/root/zombie/zombie.txt",
+        "cookiefile": YOUTUBE_COOKIES_FILE,
         }
     url = mo
     with YoutubeDL(opts) as ytdl:
