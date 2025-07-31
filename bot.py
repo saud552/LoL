@@ -2,7 +2,7 @@ from pyrogram import Client, idle
 from pyromod import listen
 
 OWNER_ID = int(f"985612253")
-ch = "AAAKP" 
+ch = "K55DD" 
 OWNER_USERNAME = "AAAKP"
 ST = "AAAKP"
 LT = "AAAKP"
