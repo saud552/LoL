@@ -302,7 +302,7 @@ async def play_audio(client, message):
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
         "outtmpl": audio_file,
         "quiet": True,
-        "cookiefile": "/root/zombie/zombie.txt",
+        "cookiefile": YOUTUBE_COOKIES_FILE,
     }
     with YoutubeDL(opts) as ytdl:
         ytdl_data = ytdl.extract_info(mo, download=True)
@@ -491,20 +491,56 @@ async def s12p582(client, message):
 async def ytsearch(_, message: Message):
     try:
         if len(message.command) < 2:
-            await message.reply_text("/search needs an argument!")
+            await message.reply_text("يرجى كتابة ما تريد البحث عنه بعد كلمة بحث")
             return
         query = message.text.split(None, 1)[1]
-        m = await message.reply_text(" searching")
-        results = YoutubeSearch(query, max_results=5).to_dict()
-        i = 0
-        text = ""
-        while i < 5:
-            text += f"Song: {results[i]['title']}\n"
-            text += f"Duration: {results[i]['duration']}\n"
-            text += f"Views: {results[i]['views']}\n"
-            text += f"Channel: {results[i]['channel']}\n"
-            text += f"https://www.youtube.com{results[i]['url_suffix']}\n\n"
-            i += 1
-        await m.edit(text, disable_web_page_preview=True)
+        m = await message.reply_text("جاري البحث والتشغيل...")
+        
+        # البحث عن الفيديو
+        search = SearchVideos(query, offset=1, mode="dict", max_results=1)
+        mi = search.result()
+        if not mi["search_result"]:
+            return await m.edit("لم يتم العثور على نتائج.")
+        
+        video_info = mi["search_result"][0]
+        mo = video_info["link"]
+        title = video_info["title"]
+        
+        # تحضير مسار الملف
+        audio_file = os.path.join(DOWNLOAD_FOLDER, f"{title}.mp4")
+        
+        # التحقق من وجود الملف
+        if os.path.exists(audio_file):
+            await m.delete()
+            bot_username = client.me.username
+            group_id = message.chat.id
+            vid = None  # صوت فقط
+            user_mention = f"{message.from_user.mention}"
+            c = await join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention)
+            if not c:
+                return
+            return
+        
+        # تحميل الملف
+        opts = {
+            "format": "bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "outtmpl": audio_file,
+            "quiet": True,
+            "cookiefile": YOUTUBE_COOKIES_FILE,
+        }
+        
+        with YoutubeDL(opts) as ytdl:
+            ytdl_data = ytdl.extract_info(mo, download=True)
+            audio_file = ytdl.prepare_filename(ytdl_data)
+        
+        await m.delete()
+        bot_username = client.me.username
+        group_id = message.chat.id
+        vid = None  # صوت فقط
+        user_mention = f"{message.from_user.mention}"
+        c = await join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention)
+        if not c:
+            return
+            
     except Exception as e:
-        await m.edit(str(e))
+        await m.edit(f"حدث خطأ: {str(e)}")
