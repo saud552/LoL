@@ -298,15 +298,43 @@ async def play_audio(client, message):
         if not c:
             return
         return 
-    opts = {
-        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        "outtmpl": audio_file,
-        "quiet": True,
-        "cookiefile": YOUTUBE_COOKIES_FILE,
-    }
-    with YoutubeDL(opts) as ytdl:
-        ytdl_data = ytdl.extract_info(mo, download=True)
-        audio_file = ytdl.prepare_filename(ytdl_data)
+    # تحميل الملف مع تدوير الكوكيز
+    cookie_files = [
+        "/workspace/cookies/cookies1.txt",
+        "/workspace/cookies/cookies2.txt", 
+        "/workspace/cookies/cookies3.txt",
+        "/workspace/cookies/cookies4.txt",
+        "/workspace/cookies/cookies5.txt",
+        "/workspace/cookies/cookies6.txt"
+    ]
+    
+    download_success = False
+    for cookie_file in cookie_files:
+        if os.path.exists(cookie_file):
+            try:
+                opts = {
+                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                    "outtmpl": audio_file,
+                    "quiet": True,
+                    "cookiefile": cookie_file,
+                    "no_warnings": True,
+                    "extract_flat": False,
+                }
+                
+                with YoutubeDL(opts) as ytdl:
+                    ytdl_data = ytdl.extract_info(mo, download=True)
+                    audio_file = ytdl.prepare_filename(ytdl_data)
+                
+                download_success = True
+                break
+                
+            except Exception as e:
+                print(f"فشل التحميل مع {cookie_file}: {e}")
+                continue
+    
+    if not download_success:
+        await mm.edit("فشل في تحميل المقطع. يرجى المحاولة مرة أخرى.")
+        return
     await mm.delete()
     bot_username = client.me.username
     c = await join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention)
@@ -488,7 +516,7 @@ async def s12p582(client, message):
 #..................................................بحث يوتيوب.................................................................
 
 @Client.on_message(filters.command("بحث",prefixes=""),group=592231800844)
-async def ytsearch(_, message: Message):
+async def ytsearch(client, message: Message):
     try:
         if len(message.command) < 2:
             await message.reply_text("يرجى كتابة ما تريد البحث عنه بعد كلمة بحث")
@@ -521,17 +549,42 @@ async def ytsearch(_, message: Message):
                 return
             return
         
-        # تحميل الملف
-        opts = {
-            "format": "bestaudio[ext=m4a]/best[ext=mp4]/best",
-            "outtmpl": audio_file,
-            "quiet": True,
-            "cookiefile": YOUTUBE_COOKIES_FILE,
-        }
+        # تحميل الملف مع تدوير الكوكيز
+        cookie_files = [
+            "/workspace/cookies/cookies1.txt",
+            "/workspace/cookies/cookies2.txt", 
+            "/workspace/cookies/cookies3.txt",
+            "/workspace/cookies/cookies4.txt",
+            "/workspace/cookies/cookies5.txt",
+            "/workspace/cookies/cookies6.txt"
+        ]
         
-        with YoutubeDL(opts) as ytdl:
-            ytdl_data = ytdl.extract_info(mo, download=True)
-            audio_file = ytdl.prepare_filename(ytdl_data)
+        download_success = False
+        for cookie_file in cookie_files:
+            if os.path.exists(cookie_file):
+                try:
+                    opts = {
+                        "format": "bestaudio[ext=m4a]/best[ext=mp4]/best",
+                        "outtmpl": audio_file,
+                        "quiet": True,
+                        "cookiefile": cookie_file,
+                        "no_warnings": True,
+                        "extract_flat": False,
+                    }
+                    
+                    with YoutubeDL(opts) as ytdl:
+                        ytdl_data = ytdl.extract_info(mo, download=True)
+                        audio_file = ytdl.prepare_filename(ytdl_data)
+                    
+                    download_success = True
+                    break
+                    
+                except Exception as e:
+                    print(f"فشل التحميل مع {cookie_file}: {e}")
+                    continue
+        
+        if not download_success:
+            return await m.edit("فشل في تحميل المقطع. يرجى المحاولة مرة أخرى.")
         
         await m.delete()
         bot_username = client.me.username
