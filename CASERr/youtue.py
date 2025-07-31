@@ -36,22 +36,18 @@ async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
     if await johned(client, message):
      return
-    keybord = InlineKeyboardMarkup([[InlineKeyboardButton("تحميل صوت 🎧", callback_data=f"hidhkdhj")], [InlineKeyboardButton(text="اضف البوت الي مجموعتك او قناتك🚦", url=f"https://t.me/{bot_username}?startgroup=True")]])
-    chat_idd = message.chat.id
-    await message.reply_text(f"اختار ما يناسبك 🚦", reply_markup=keybord)
     
-
-
-@Client.on_callback_query(filters.regex("hidhkdhj"))
-async def h24dg54hfbie(client: Client, CallbackQuery):
-    bot_username = client.me.username
-    name = await client.ask(CallbackQuery.message.chat.id, text="عاوز تنزل ايه..🚦", filters=filters.user(CallbackQuery.from_user.id), timeout=200)
-    text = name.text
+    # طلب النص من المستخدم مباشرة
+    try:
+        name = await client.ask(message.chat.id, text="عاوز تنزل ايه..🚦", filters=filters.user(message.from_user.id), timeout=200)
+        text = name.text
+    except:
+        return await message.reply_text("انتهت مهلة الطلب، حاول مرة أخرى")
+    
     if text in yoro:
-      return await CallbackQuery.message.reply_text("لا يمكن تنزيل هذا🚦")  
-    else:      
-     print("احم")    
-    h = await CallbackQuery.message.reply_text(f"جاري البحث انتظر قليلا 🚦")
+        return await message.reply_text("لا يمكن تنزيل هذا❌")  
+    
+    h = await message.reply_text(f"جاري البحث انتظر قليلا 🚦")
     search = SearchVideos(text, offset=1, mode="dict", max_results=1)
     mi = search.result()
     mio = mi["search_result"]
@@ -68,15 +64,18 @@ async def h24dg54hfbie(client: Client, CallbackQuery):
             ytdl_data = ytdl.extract_info(mo, download=True)
             audio_file = ytdl.prepare_filename(ytdl_data)
     except Exception as e:
-        print(f"   : {e}")
-        return
+        print(f"خطأ في التحميل : {e}")
+        await h.delete()
+        return await message.reply_text("حدث خطأ أثناء التحميل، حاول مرة أخرى")
+    
     c_time = time.time()
     capy = f"[{thum}]({mo})"
     file_stark = f"{ytdl_data['id']}.mp3"
     await h.delete()
     try:
-        await client.send_audio(CallbackQuery.message.chat.id, audio=audio_file, duration=int(ytdl_data["duration"]), title=str(ytdl_data["title"]), performer=str(ytdl_data["uploader"]), file_name=str(ytdl_data["title"]), thumb=sedlyf,caption=capy)
+        await client.send_audio(message.chat.id, audio=audio_file, duration=int(ytdl_data["duration"]), title=str(ytdl_data["title"]), performer=str(ytdl_data["uploader"]), file_name=str(ytdl_data["title"]), thumb=sedlyf,caption=capy)
         os.remove(audio_file)
         os.remove(sedlyf)
     except Exception as e:
-        print(f" \n{e}")
+        print(f"خطأ في الإرسال\n{e}")
+        await message.reply_text("حدث خطأ أثناء إرسال الملف")
