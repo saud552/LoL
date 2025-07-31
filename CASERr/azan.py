@@ -115,7 +115,7 @@ prayer_stickers = {
     "العشاء": {"channel_username": "WORLED_CAESAR", "message_id": 353},
 }
 
-@Client.on_message(filters.text & ~filters.private(), group=20)
+@Client.on_message(filters.text & ~filters.private, group=20)
 async def handle_azan_command(c, msg):
     chat_id = msg.chat.id
     if msg.text == "تفعيل الاذان":
@@ -222,7 +222,7 @@ async def azan(bot_username):
 
 azkar_ses = [] 
 
-@Client.on_message(filters.text & ~filters.private(), group=220)
+@Client.on_message(filters.text & ~filters.private, group=220)
 async def azkar_command(c, msg):
     chat_id = msg.chat.id
     if msg.text == "تفعيل الاذكار الصوتيه":

@@ -673,7 +673,7 @@ async def caesa57648r_bot(client, message):
                 reply_markup=keyboard
             )
 
-@Client.on_message(filters.text & ~filters.me() & filters.group, group=715135)
+@Client.on_message(filters.text & ~filters.me & filters.group, group=715135)
 async def respond_to_caesar(client, message):
     bot_username = client.me.username
     bot_id = client.me.id
