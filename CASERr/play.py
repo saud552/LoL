@@ -21,10 +21,10 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ChatType, ChatMemberStatus
 from pytgcalls import PyTgCalls
 from pytgcalls.exceptions import (NoActiveGroupCall,)
-from pytgcalls.types import (JoinedGroupCallParticipant,
-                             LeftGroupCallParticipant, Update)
-from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
-from pytgcalls.types.stream import StreamAudioEnded
+from pytgcalls.types import (
+                              Update)
+from pytgcalls.types import MediaStream
+from pytgcalls.types import StreamEnded
 import asyncio
 from config import *
 import numpy as np
@@ -59,7 +59,7 @@ async def Call(bot_username, message):
     hoss = await get_call(bot_username)
     @hoss.on_stream_end()
     async def stream_end_handler1(client, update: Update):
-        if not isinstance(update, StreamAudioEnded):
+        if not isinstance(update, StreamEnded):
             return        
         await change_stream(bot_username, update.chat_id, client, message)
 
@@ -164,8 +164,8 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
     file_path = audio_file
     audio_stream_quality = AudioQuality.MEDIUM
     video_stream_quality = VideoQuality.MEDIUM
-    stream = (AudioVideoPiped(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
-              if vid else AudioPiped(file_path, audio_parameters=audio_stream_quality))
+    stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
+              if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
     try:
         await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
         hossamm.append(file_path)
@@ -181,7 +181,7 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
                 Done = True
             except Exception:
                 pass
-    except :
+    except Exception as e:
         if group_id not in playlist:
             playlist[group_id] = []
             vidd[group_id] = []
@@ -197,9 +197,6 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
             count = len(playlist[group_id])
             coun[group_id].append(count)
         await pphoto(client, message, mi, user_mention, count)
-    except TelegramServerError:
-        await client.send_message(message.chat.id, "**حدث خطأ في الخادم...**")
-    except Exception as e:
         print(e)
     return False
 
@@ -228,7 +225,7 @@ async def change_stream(bot_username, chat_id, client, message):
             audio_stream_quality = AudioQuality.MEDIUM
             video_stream_quality = VideoQuality.MEDIUM
             hossamm.clear()
-            stream = (AudioVideoPiped(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) if vid else AudioPiped(file_path, audio_parameters=audio_stream_quality))
+            stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
             await hoss.change_stream(chat_id, stream)
             hossamm.append(file_path)
             await pphoto(client, message, mi, user_mention, count)
@@ -240,7 +237,7 @@ async def change_stream(bot_username, chat_id, client, message):
         except Exception as e:
             await message.reply_text("يعم فوق مفيش حاجه شغاله اصلا 😂")
 
-DOWNLOAD_FOLDER = "/root/downloads"
+DOWNLOAD_FOLDER = "/workspace/downloads"
 
 mamno = ["Xnxx", "سكس","اباحيه","جنس","اباحي","زب","كسمك","كس","شرمطه","نيك","لبوه","فشخ","مهبل","نيك خلفى","بتتناك","مساج","كس ملبن","نيك جماعى","نيك جماعي","نيك بنات","رقص","قلع","خلع ملابس","بنات من غير هدوم","بنات ملط","نيك طيز","نيك من ورا","نيك في الكس","ارهاب","موت","حرب","سياسه","سياسي","سكسي","قحبه","شواز","ممويز","نياكه","xnxx","sex","xxx","Sex","Born","borno","Sesso","احا","خخخ","ميتينك","تناك","يلعن","كسك","كسمك","عرص","خول","علق","كسم","انيك","انيكك","اركبك","زبي","نيك","شرموط","فحل","ديوث","سالب","مقاطع","ورعان","هايج","مشتهي","زوبري","طيز","كسي","كسى","ساحق","سحق","لبوه","اريحها","مقاتع","لانجيري","سحاق","مقطع","مقتع","نودز","ندز","ملط","لانجرى","لانجري","لانجيرى","مولااااعه"]
 @Client.on_message(filters.command(["تشغيل", "شغل", "فيد", "فيديو", "video", "play"], ""), group=57655580)

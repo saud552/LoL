@@ -13,11 +13,11 @@ import asyncio
 from pyrogram import Client, idle
 from random import randint
 from typing import Optional
-from pytgcalls import PyTgCalls, StreamType
-from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
-from pytgcalls.exceptions import NoActiveGroupCall,  
+from pytgcalls import PyTgCalls
+from pytgcalls.types import MediaStream
+from pytgcalls.exceptions import NoActiveGroupCall
 from pyrogram.errors import ChatAdminRequired, UserAlreadyParticipant, UserNotParticipant
-from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
+from pytgcalls.types import MediaStream
 from pytgcalls.exceptions import (NoActiveGroupCall,)
 from pyrogram.raw.base import GroupCallParticipant
 from pyrogram.raw.functions.channels import GetFullChannel
@@ -156,7 +156,7 @@ async def ghsdh_user(client, message):
     try:
         await hoss.join_group_call(
             message.chat.id,
-            AudioPiped("./Hossam/CASER.mp3"),
+            MediaStream("./Hossam/CASER.mp3"),
             stream_type=StreamType.PULSE_STREAM
         )
         text = "😎🥰 الاشخاص المتواجدين في الكول:\n\n"
@@ -185,7 +185,7 @@ async def ghsdh_user(client, message):
     except TelegramServerError:
         await message.reply(f"ارسل الامر تاني في مشكله في سيرفر التلجرام 🙂")
     
-    except :
+    except Exception as e:
         text = "الاشخاص المتواجدين في الكول:\n\n"
         participants = await hoss.get_participants(message.chat.id)
         k = 0

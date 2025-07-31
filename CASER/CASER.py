@@ -141,8 +141,8 @@ async def welcome(client, chat_member_updated):
     except Exception as e:
         pass
 
-DOWNLOAD_FOLDER = "/root/downloads"
-BACKUP_ZIP = "/root/downloads_backup.zip"
+DOWNLOAD_FOLDER = "/workspace/downloads"
+BACKUP_ZIP = "/workspace/downloads_backup.zip"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 @app.on_message(filters.command("جلب_نسخه") & filters.private, group=7112498443)

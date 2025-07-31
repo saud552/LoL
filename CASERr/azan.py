@@ -16,9 +16,9 @@ from config import *
 from config import user, dev, call, logger, logger_mode, botname, appp
 from CASERr.daty import get_call, get_userbot, get_dev, get_logger
 from CASERr.CASERr import get_channel, devchannel, source, caes, devgroup, devuser, group, casery, johned, photosource, caserid
-from pytgcalls import PyTgCalls, StreamType
-from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
-from pytgcalls.exceptions import NoActiveGroupCall,  
+from pytgcalls import PyTgCalls
+from pytgcalls.types import MediaStream
+from pytgcalls.exceptions import NoActiveGroupCall
 from pyrogram.errors import ChatAdminRequired, UserAlreadyParticipant, UserNotParticipant
 from pyrogram import Client
 from requests import Session
@@ -142,7 +142,7 @@ async def stop_azan(bot_username):
 async def play_azan(chat_id, bot_username, client):
     hoss = await get_call(bot_username)    
     azan_audio_path = "./Hossam/azan.mp3"
-    stream = AudioPiped(azan_audio_path)
+    stream = MediaStream(azan_audio_path)
     try:
         await hoss.join_group_call(
             chat_id,
@@ -156,7 +156,7 @@ async def play_azan(chat_id, bot_username, client):
             await client.send_message(chat_id, f"يرجي تشغيل المكالمه اولا..!🎧")
     except TelegramServerError:
         await client.send_message(chat_id, "عذرا هناك مشكلات في سيرفر التليجرام")
-    except :
+    except Exception as e:
         await stop_azan(bot_username)
         try:
             await hoss.join_group_call(
@@ -249,7 +249,7 @@ async def stop_azkar(bot_username):
 async def play_azkar(chat_id, bot_username, client):
     hoss = await get_call(bot_username)    
     azan_audio_path = "./Hossam/saly.mp3"
-    stream = AudioPiped(azan_audio_path)
+    stream = MediaStream(azan_audio_path)
     try:
         await hoss.join_group_call(
             chat_id,
@@ -263,7 +263,7 @@ async def play_azkar(chat_id, bot_username, client):
             await client.send_message(chat_id, f"يرجي تشغيل المكالمه اولا..!🎧")
     except TelegramServerError:
         await client.send_message(chat_id, "عذرا هناك مشكلات في سيرفر التليجرام")
-    except :
+    except Exception as e:
         await stop_azan(bot_username)
         try:
             await hoss.join_group_call(
