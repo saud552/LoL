@@ -1,9 +1,10 @@
 from pyrogram import Client, idle
 from pyromod import listen
+from config import *
 
-OWNER_ID = int(f"985612253")
+OWNER_ID = int(getenv("OWNER_ID", "985612253"))
 ch = "K55DD" 
-OWNER_USERNAME = "AAAKP"
+OWNER_USERNAME = getenv("OWNER_USERNAME", "AAAKP")
 ST = "AAAKP"
 LT = "AAAKP"
 DEVS = []
@@ -12,15 +13,17 @@ DEVS.append(ST)
 DEVS.append(LT)
 OWNER = "𝐷𝑟. 𝐾ℎ𝑎𝑦𝑎𝑙 𓏺"
 
-bot_token="7305811865:AAF_PKkBWEUw-QdLg1ee5Xp7oksTG6XGK8c"
-bot_token2=None
+bot_token = getenv("BOT_TOKEN", "7305811865:AAF_PKkBWEUw-QdLg1ee5Xp7oksTG6XGK8c")
+bot_token2 = None
 
+api_id = int(getenv("API_ID", "8186557"))
+api_hash = getenv("API_HASH", "efd77b34c69c164ce158037ff5a0d117")
 
-bot = Client("ITA", api_id=8186557, api_hash="efd77b34c69c164ce158037ff5a0d117", bot_token=bot_token, plugins=dict(root="CASER"))
+bot = Client("ITA", api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=dict(root="CASER"))
 
 # إنشاء العميل الثاني فقط إذا كان هناك session string
 if bot_token2:
-    lolo = Client("hossam", api_id=8186557, api_hash="efd77b34c69c164ce158037ff5a0d117", session_string=bot_token2)
+    lolo = Client("hossam", api_id=api_id, api_hash=api_hash, session_string=bot_token2)
 else:
     lolo = None
 

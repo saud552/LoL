@@ -21,15 +21,11 @@ tgcrypto
 youtube-search
 youtube-search-python
 yt-dlp
-speedtest-cli
 pymongo[srv]
-pyromod~=1.5
-aiofiles
 beautifulsoup4
 py-tgcalls==2.2.5
 pykeyboard
 pyyaml==5.3.1
-speedtest-cli
 unidecode
 pySmartDL
 telegraph
@@ -37,3 +33,5 @@ pytz
 gtts
 wget
 numpy
+redis
+pytube
