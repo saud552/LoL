@@ -12,9 +12,9 @@ from config import COOKIES_DIR, YOUTUBE_COOKIES_FILE, SPOTIFY_COOKIES_FILE, DEEZ
 def check_cookies_exist():
     """فحص وجود ملفات الكوكيز"""
     files = {
-        "YouTube": YOUTUBE_COOKIES_FILE,
-        "Spotify": SPOTIFY_COOKIES_FILE,
-        "Deezer": DEEZER_COOKIES_FILE
+        "YouTube (cookies1.txt)": YOUTUBE_COOKIES_FILE,
+        # "Spotify (cookies2.txt)": SPOTIFY_COOKIES_FILE,  # إذا كنت تريد Spotify
+        # "Deezer (cookies3.txt)": DEEZER_COOKIES_FILE     # إذا كنت تريد Deezer
     }
     
     print("🔍 فحص ملفات الكوكيز...")
@@ -38,8 +38,8 @@ def backup_cookies():
     
     files_to_backup = [
         YOUTUBE_COOKIES_FILE,
-        SPOTIFY_COOKIES_FILE,
-        DEEZER_COOKIES_FILE
+        # SPOTIFY_COOKIES_FILE,  # إذا كنت تريد Spotify
+        # DEEZER_COOKIES_FILE     # إذا كنت تريد Deezer
     ]
     
     print(f"💾 إنشاء نسخة احتياطية في: {backup_path}")
@@ -57,7 +57,7 @@ def validate_cookies_format():
     """التحقق من تنسيق ملفات الكوكيز"""
     print("🔍 التحقق من تنسيق ملفات الكوكيز...")
     
-    files = [YOUTUBE_COOKIES_FILE, SPOTIFY_COOKIES_FILE, DEEZER_COOKIES_FILE]
+    files = [YOUTUBE_COOKIES_FILE]  # يمكنك إضافة المزيد إذا كنت تريد
     
     for file_path in files:
         if not os.path.exists(file_path):

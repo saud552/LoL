@@ -9,9 +9,10 @@ load_dotenv()
 
 # تكوين ملفات الكوكيز
 COOKIES_DIR = "/workspace/cookies"
-YOUTUBE_COOKIES_FILE = os.path.join(COOKIES_DIR, "youtube_cookies.txt")
-SPOTIFY_COOKIES_FILE = os.path.join(COOKIES_DIR, "spotify_cookies.txt")
-DEEZER_COOKIES_FILE = os.path.join(COOKIES_DIR, "deezer_cookies.txt")
+# يمكنك تغيير هذه الأسماء حسب ما تريد
+YOUTUBE_COOKIES_FILE = os.path.join(COOKIES_DIR, "cookies1.txt")  # أو أي اسم تريده
+# SPOTIFY_COOKIES_FILE = os.path.join(COOKIES_DIR, "cookies2.txt")  # إذا كنت تريد Spotify
+# DEEZER_COOKIES_FILE = os.path.join(COOKIES_DIR, "cookies3.txt")   # إذا كنت تريد Deezer
 
 # إنشاء مجلد الكوكيز إذا لم يكن موجوداً
 os.makedirs(COOKIES_DIR, exist_ok=True)
