@@ -36,52 +36,11 @@ async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
     if await johned(client, message):
      return
-    keybord = InlineKeyboardMarkup([[InlineKeyboardButton("تحميل صوت 🎧", callback_data=f"hidhkdhj"),InlineKeyboardButton("تحميل فيديو 🎥", callback_data=f"voic5854e1")], [InlineKeyboardButton(text="اضف البوت الي مجموعتك او قناتك🚦", url=f"https://t.me/{bot_username}?startgroup=True")]])
+    keybord = InlineKeyboardMarkup([[InlineKeyboardButton("تحميل صوت 🎧", callback_data=f"hidhkdhj")], [InlineKeyboardButton(text="اضف البوت الي مجموعتك او قناتك🚦", url=f"https://t.me/{bot_username}?startgroup=True")]])
     chat_idd = message.chat.id
     await message.reply_text(f"اختار ما يناسبك 🚦", reply_markup=keybord)
     
-@Client.on_callback_query(filters.regex("voic5854e1"))
-async def h24dgfgbie(client: Client, CallbackQuery):
-    bot_username = client.me.username
-    name = await client.ask(CallbackQuery.message.chat.id, text="عاوز تنزل ايه..🚦", filters=filters.user(CallbackQuery.from_user.id), timeout=200)
-    text = name.text
-    if text in yoro:
-        return await CallbackQuery.message.reply_text("لا يمكن تنزيل هذا❌")  
-    else:
-        print("احم")
-    h = await CallbackQuery.message.reply_text(f"جاري البحث انتظر قليلا 🚦")
-    search = SearchVideos(text, offset=1, mode="dict", max_results=1)
-    mi = search.result()
-    mio = mi["search_result"]
-    mo = mio[0]["link"]
-    thum = mio[0]["title"]
-    fridayz = mio[0]["id"]
-    kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
-    url = mo
-    sedlyf = wget.download(kekme)
-    opts = {
-         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        "keepvideo": True,
-        "prefer_ffmpeg": False,
-        "geo_bypass": True,
-        "quite": True,
-    }
-    try:
-        with YoutubeDL(opts) as ytdl:
-            ytdl_data = ytdl.extract_info(url, download=True)
-            video_file = ytdl.prepare_filename(ytdl_data)
-    except Exception as e:
-        print(f"{e}")
-        return
-    c_time = time.time()
-    capy = f"[{thum}]({mo})"
-    await h.delete()
-    try:
-        await client.send_video(CallbackQuery.message.chat.id, video=video_file, duration=int(ytdl_data["duration"]), file_name=str(ytdl_data["title"]), thumb=sedlyf, supports_streaming=True, caption=capy)
-        os.remove(video_file)
-        os.remove(sedlyf)
-    except Exception as e:
-        print(f"\n{e}")
+
 
 @Client.on_callback_query(filters.regex("hidhkdhj"))
 async def h24dg54hfbie(client: Client, CallbackQuery):
