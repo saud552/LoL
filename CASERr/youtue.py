@@ -192,7 +192,7 @@ async def download_audio(client, message, text):
             await asyncio.sleep(1)
 
 # الأوامر مع /
-@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت"], ""), group=71328934)
+@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
     if await johned(client, message):
@@ -214,7 +214,7 @@ async def handle_text_download(client, message):
      return
     
     # فحص إذا كان النص يبدأ بأحد الأوامر بدون /
-    commands = ["تحميل", "نزل", "تنزيل", "يوتيوب", "حمل", "تنزل", "يوت"]
+    commands = ["تحميل", "نزل", "تنزيل", "يوتيوب", "حمل", "تنزل", "يوت", "بحث"]
     text = message.text.strip()
     
     # فحص إذا كان النص يبدأ بأحد الأوامر
