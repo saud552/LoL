@@ -1,18 +1,18 @@
 from pyrogram import Client, idle
 from pyromod import listen
 
-OWNER_ID = int(f"1457243602")
-ch = "z1_xa" 
-OWNER_USERNAME = "z1_xa"
-ST = "z1_xa"
-LT = "z1_xa"
+OWNER_ID = int(f"985612253")
+ch = "AAAKP" 
+OWNER_USERNAME = "AAAKP"
+ST = "AAAKP"
+LT = "AAAKP"
 DEVS = []
 DEVS.append(OWNER_USERNAME)
 DEVS.append(ST)
 DEVS.append(LT)
-OWNER = "عباس"
+OWNER = "𝐷𝑟. 𝐾ℎ𝑎𝑦𝑎𝑙 𓏺"
 
-bot_token="توكن"
+bot_token="7305811865:AAF_PKkBWEUw-QdLg1ee5Xp7oksTG6XGK8c"
 bot_token2="كود جلسه بايروجرام "
 
 
