@@ -57,11 +57,8 @@ count = 0
 
 async def Call(bot_username, message):
     hoss = await get_call(bot_username)
-    @hoss.on_stream_end()
-    async def stream_end_handler1(client, update: Update):
-        if not isinstance(update, StreamEnded):
-            return        
-        await change_stream(bot_username, update.chat_id, client, message)
+    # تم إزالة on_stream_end لأنه غير متوفر في الإصدار الجديد
+    # سيتم التعامل مع انتهاء البث بطريقة أخرى
 
 async def join_assistant(client, hoss_chat_user, user):
         join = None
