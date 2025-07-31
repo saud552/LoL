@@ -207,7 +207,7 @@ async def gigshgxvkdnnj(client, message):
     await download_audio(client, message, text)
 
 # الأوامر بدون /
-@Client.on_message(filters.text & ~filters.command, group=71328935)
+@Client.on_message(filters.text, group=71328935)
 async def handle_text_download(client, message):
     bot_username = client.me.username
     if await johned(client, message):

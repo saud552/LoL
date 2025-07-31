@@ -16,12 +16,12 @@ from CASERr.CASERr import get_channel, devchannel, source, caes, johned
 
 user_states = {}
 
-@Client.on_message(filters.command(["زخرفه", "• زخرفه •","زغرفه","زغرفة","زخرفة","الزخرفه","الزخرفة","الزغرفه","الزغرفة"], "") & ~filters.channel, group=46853)
+@Client.on_message(filters.command(["زخرفه", "• زخرفه •","زغرفه","زغرفة","زخرفة","الزخرفه","الزخرفة","الزغرفه","الزغرفة"], ""), group=46853)
 async def zahydufrafa(client, m):
     await m.reply_text("◍ قم بكتابة ما تريد زخرفته هكذا\nزخرفه EL NJUM")
     user_states[m.from_user.id] = "waiting_for_text"
 
-@Client.on_message(filters.text & ~filters.channel, group=37095)
+@Client.on_message(filters.text, group=37095)
 async def hahdhgndle_text(client, m):
     if m.from_user.id in user_states and user_states[m.from_user.id] == "waiting_for_text":
         text = m.text
