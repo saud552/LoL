@@ -31,23 +31,23 @@ from config import YOUTUBE_COOKIES_FILE
 
 yoro = ["Xnxx", "سكس","اباحيه","جنس","اباحي","زب","كسمك","كس","شرمطه","نيك","لبوه","فشخ","مهبل","نيك خلفى","بتتناك","مساج","كس ملبن","نيك جماعى","نيك جماعي","نيك بنات","رقص","قلع","خلع ملابس","بنات من غير هدوم","بنات ملط","نيك طيز","نيك من ورا","نيك في الكس","ارهاب","موت","حرب","سياسه","سياسي","سكسي","قحبه","شواز","ممويز","نياكه","xnxx","sex","xxx","Sex","Born","borno","Sesso","احا","خخخ","ميتينك","تناك","يلعن","كسك","كسمك","عرص","خول","علق","كسم","انيك","انيكك","اركبك","زبي","نيك","شرموط","فحل","ديوث","سالب","مقاطع","ورعان","هايج","مشتهي","زوبري","طيز","كسي","كسى","ساحق","سحق","لبوه","اريحها","مقاتع","لانجيري","سحاق","مقطع","مقتع","نودز","ندز","ملط","لانجرى","لانجري","لانجيرى","مولااااعه"]
     
-@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل"], ""), group=71328934)
+@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
     if await johned(client, message):
      return
     
-    # طلب النص من المستخدم مباشرة
-    try:
-        name = await client.ask(message.chat.id, text="عاوز تنزل ايه..🚦", filters=filters.user(message.from_user.id), timeout=200)
-        text = name.text
-    except:
-        return await message.reply_text("انتهت مهلة الطلب، حاول مرة أخرى")
+    # استخراج النص من الأمر
+    text = message.text.split(" ", 1)
+    if len(text) < 2:
+        return await message.reply_text("يرجى كتابة ما تريد تحميله بعد الأمر\nمثال: /بحث هيفاء وهبي بوس الواوا")
+    
+    text = text[1]  # النص بعد الأمر
     
     if text in yoro:
         return await message.reply_text("لا يمكن تنزيل هذا❌")  
     
-    h = await message.reply_text(f"جاري البحث انتظر قليلا 🚦")
+    h = await message.reply_text("جاري التحميل...")
     search = SearchVideos(text, offset=1, mode="dict", max_results=1)
     mi = search.result()
     mio = mi["search_result"]
@@ -71,7 +71,7 @@ async def gigshgxvkdnnj(client, message):
     c_time = time.time()
     capy = f"[{thum}]({mo})"
     file_stark = f"{ytdl_data['id']}.mp3"
-    await h.delete()
+    await h.delete()  # حذف رسالة "جاري التحميل..."
     try:
         await client.send_audio(message.chat.id, audio=audio_file, duration=int(ytdl_data["duration"]), title=str(ytdl_data["title"]), performer=str(ytdl_data["uploader"]), file_name=str(ytdl_data["title"]), thumb=sedlyf,caption=capy)
         os.remove(audio_file)
