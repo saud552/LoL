@@ -37,37 +37,69 @@ async def download_audio(client, message, text):
         return await message.reply_text("لا يمكن تنزيل هذا❌")  
     
     h = await message.reply_text("جاري التحميل...")
-    search = SearchVideos(text, offset=1, mode="dict", max_results=1)
-    mi = search.result()
-    mio = mi["search_result"]
-    mo = mio[0]["link"]
-    mio[0]["duration"]
-    thum = mio[0]["title"]
-    fridayz = mio[0]["id"]
-    mio[0]["channel"]
-    kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
-    sedlyf = wget.download(kekme)
-    opts = {'format': 'bestaudio[ext=m4a]', 'outtmpl': '%(title)s.%(ext)s', "cookiefile": YOUTUBE_COOKIES_FILE}
+    
     try:
+        search = SearchVideos(text, offset=1, mode="dict", max_results=1)
+        mi = search.result()
+        
+        if not mi or not mi.get("search_result") or len(mi["search_result"]) == 0:
+            await h.delete()
+            return await message.reply_text("لم يتم العثور على نتائج للبحث المطلوب")
+        
+        mio = mi["search_result"]
+        mo = mio[0]["link"]
+        thum = mio[0]["title"]
+        fridayz = mio[0]["id"]
+        
+        # تحميل الصورة المصغرة
+        kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
+        sedlyf = wget.download(kekme)
+        
+        # إعدادات التحميل
+        opts = {
+            'format': 'bestaudio[ext=m4a]', 
+            'outtmpl': '%(title)s.%(ext)s', 
+            "cookiefile": YOUTUBE_COOKIES_FILE
+        }
+        
         with YoutubeDL(opts) as ytdl:
             ytdl_data = ytdl.extract_info(mo, download=True)
             audio_file = ytdl.prepare_filename(ytdl_data)
+        
+        # إعداد الرسالة
+        capy = f"[{thum}]({mo})"
+        duration = int(ytdl_data.get("duration", 0))
+        title = str(ytdl_data.get("title", "Unknown"))
+        performer = str(ytdl_data.get("uploader", "Unknown"))
+        
+        await h.delete()  # حذف رسالة "جاري التحميل..."
+        
+        # إرسال الملف الصوتي
+        await client.send_audio(
+            message.chat.id, 
+            audio=audio_file, 
+            duration=duration, 
+            title=title, 
+            performer=performer, 
+            file_name=title, 
+            thumb=sedlyf,
+            caption=capy
+        )
+        
+        # تنظيف الملفات المؤقتة
+        try:
+            os.remove(audio_file)
+            os.remove(sedlyf)
+        except:
+            pass
+            
     except Exception as e:
         print(f"خطأ في التحميل : {e}")
-        await h.delete()
+        try:
+            await h.delete()
+        except:
+            pass
         return await message.reply_text("حدث خطأ أثناء التحميل، حاول مرة أخرى")
-    
-    c_time = time.time()
-    capy = f"[{thum}]({mo})"
-    file_stark = f"{ytdl_data['id']}.mp3"
-    await h.delete()  # حذف رسالة "جاري التحميل..."
-    try:
-        await client.send_audio(message.chat.id, audio=audio_file, duration=int(ytdl_data["duration"]), title=str(ytdl_data["title"]), performer=str(ytdl_data["uploader"]), file_name=str(ytdl_data["title"]), thumb=sedlyf,caption=capy)
-        os.remove(audio_file)
-        os.remove(sedlyf)
-    except Exception as e:
-        print(f"خطأ في الإرسال\n{e}")
-        await message.reply_text("حدث خطأ أثناء إرسال الملف")
 
 # الأوامر مع /
 @Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)
@@ -93,12 +125,12 @@ async def handle_text_download(client, message):
     
     # فحص إذا كان النص يبدأ بأحد الأوامر بدون /
     commands = ["تحميل", "نزل", "تنزيل", "يوتيوب", "حمل", "تنزل", "يوت", "بحث"]
-    text = message.text
+    text = message.text.strip()
     
     # فحص إذا كان النص يبدأ بأحد الأوامر
     is_command = False
     for cmd in commands:
-        if text.startswith(cmd + " "):
+        if text.lower().startswith(cmd.lower() + " "):
             is_command = True
             # استخراج النص بعد الأمر
             text = text[len(cmd):].strip()
