@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from youtubesearchpython.__future__ import VideosSearch 
+from youtubesearchpython import SearchVideos
 import os
 import aiohttp
 import requests
@@ -9,36 +9,54 @@ import yt_dlp
 import time 
 from datetime import datetime, timedelta
 from youtube_search import YoutubeSearch
-from pyrogram import Client as client
 from pyrogram.errors import (ChatAdminRequired,
                              UserAlreadyParticipant,
                              UserNotParticipant)
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ChatType, ChatMemberStatus
-import asyncio
 from config import *
 import numpy as np
 from yt_dlp import YoutubeDL
-from pyrogram import Client
-from youtubesearchpython import SearchVideos
 from CASERr.CASERr import get_channel, johned
 from io import BytesIO
 import aiofiles
 import wget
 from pyrogram.types import *
-import os, json, requests
+import json
 from config import YOUTUBE_COOKIES_FILE
 
+# قائمة الكلمات المحظورة
 yoro = ["Xnxx", "سكس","اباحيه","جنس","اباحي","زب","كسمك","كس","شرمطه","نيك","لبوه","فشخ","مهبل","نيك خلفى","بتتناك","مساج","كس ملبن","نيك جماعى","نيك جماعي","نيك بنات","رقص","قلع","خلع ملابس","بنات من غير هدوم","بنات ملط","نيك طيز","نيك من ورا","نيك في الكس","ارهاب","موت","حرب","سياسه","سياسي","سكسي","قحبه","شواز","ممويز","نياكه","xnxx","sex","xxx","Sex","Born","borno","Sesso","احا","خخخ","ميتينك","تناك","يلعن","كسك","كسمك","عرص","خول","علق","كسم","انيك","انيكك","اركبك","زبي","نيك","شرموط","فحل","ديوث","سالب","مقاطع","ورعان","هايج","مشتهي","زوبري","طيز","كسي","كسى","ساحق","سحق","لبوه","اريحها","مقاتع","لانجيري","سحاق","مقطع","مقتع","نودز","ندز","ملط","لانجرى","لانجري","لانجيرى","مولااااعه"]
+
+def check_forbidden_words(text):
+    """فحص النص للكلمات المحظورة"""
+    text_lower = text.lower()
+    for word in yoro:
+        if word.lower() in text_lower:
+            return True
+    return False
+
+def clean_temp_files(*files):
+    """تنظيف الملفات المؤقتة"""
+    for file_path in files:
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"خطأ في حذف الملف {file_path}: {e}")
 
 # دالة التحميل المشتركة
 async def download_audio(client, message, text):
-    if text in yoro:
+    # فحص الكلمات المحظورة
+    if check_forbidden_words(text):
         return await message.reply_text("لا يمكن تنزيل هذا❌")  
     
     h = await message.reply_text("جاري التحميل...")
+    audio_file = None
+    sedlyf = None
     
     try:
+        # البحث في YouTube
         search = SearchVideos(text, offset=1, mode="dict", max_results=1)
         mi = search.result()
         
@@ -87,18 +105,18 @@ async def download_audio(client, message, text):
         )
         
         # تنظيف الملفات المؤقتة
-        try:
-            os.remove(audio_file)
-            os.remove(sedlyf)
-        except:
-            pass
+        clean_temp_files(audio_file, sedlyf)
             
     except Exception as e:
         print(f"خطأ في التحميل : {e}")
         try:
             await h.delete()
-        except:
-            pass
+        except Exception as del_error:
+            print(f"خطأ في حذف رسالة التحميل: {del_error}")
+        
+        # تنظيف الملفات في حالة الخطأ
+        clean_temp_files(audio_file, sedlyf)
+        
         return await message.reply_text("حدث خطأ أثناء التحميل، حاول مرة أخرى")
 
 # الأوامر مع /
