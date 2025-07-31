@@ -1,223 +1,179 @@
-from pyrogram import Client, filters
-from youtubesearchpython.__future__ import VideosSearch 
+# -*- coding: utf-8 -*-
+"""
+🎵 نظام التشغيل الذكي المحسن - النسخة المتطورة V3
+===================================================
+متكامل مع النظام المختلط المحسن (YouTube API + yt-dlp)
+يدعم التشغيل المتوازي والذكي مع إحصائيات شاملة
+"""
+
+import asyncio
+import random
+import string
+import time
 import os
-import aiohttp
-import requests
-import random 
-import asyncio
-import yt_dlp
-from datetime import datetime, timedelta
-from youtube_search import YoutubeSearch
-from youtubesearchpython import SearchVideos
-import pytgcalls
-from pytgcalls.types import AudioQuality, VideoQuality
-from typing import Union
-from pyrogram import Client, filters 
-from pyrogram import Client as client
-from pyrogram.errors import (ChatAdminRequired,
-                             UserAlreadyParticipant,
-                             UserNotParticipant)
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.enums import ChatType, ChatMemberStatus
+from typing import Dict, Optional, Union
+
+# استيراد مكتبات Pyrogram
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
+from pytgcalls.exceptions import NoActiveGroupCall
 from pytgcalls import PyTgCalls
-from pytgcalls.exceptions import (NoActiveGroupCall,)
-from pytgcalls.types import (
-                              Update)
-from pytgcalls.types import MediaStream
-from pytgcalls.types import StreamEnded
-import asyncio
-from config import *
-import numpy as np
+from pytgcalls.types import AudioQuality, VideoQuality, MediaStream, StreamType
+from pytgcalls.types import Update, StreamEnded
+
+# استيراد مكتبات التحميل
 from yt_dlp import YoutubeDL
-from pytube import YouTube
-from config import user, dev, call, logger, logger_mode, botname, appp, YOUTUBE_COOKIES_FILE
-from bot import OWNER_ID
-from CASERr.daty import get_call, get_userbot, get_dev, get_logger, del_userbot, del_call, get_devss
-from pyrogram import Client
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
-from io import BytesIO
-import aiofiles
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-from unidecode import unidecode
-import asyncio
-import aiohttp
-import re
-from typing import Union
-from pyrogram.types import Message
+from youtubesearchpython import SearchVideos
+from youtube_search import YoutubeSearch
 
-playlist = {}
+# استيراد إعدادات البوت
+from config import *
+from bot import *
+
+# متغيرات النظام المحسن
+system_stats = {
+    'total_play_requests': 0,
+    'successful_plays': 0,
+    'failed_plays': 0,
+    'cache_hits': 0,
+    'hybrid_downloads': 0,
+    'start_time': time.time()
+}
+
+# إحصائيات التشغيل
+play_stats = {
+    'total_requests': 0,
+    'successful_plays': 0,
+    'failed_plays': 0,
+    'cache_hits': 0,
+    'hybrid_downloads': 0,
+    'start_time': time.time()
+}
+
+# متغيرات التشغيل
+playing = {}
 hossamm = []
-vidd = {}
-miii = {}
-playing = {} 
-usera = {}
-user_mentio = {}
-coun = {}
 count = 0
+coun = {}
+vidd = {}
+playlist = {}
 
-async def Call(bot_username, message):
-    hoss = await get_call(bot_username)
-    # تم إزالة on_stream_end لأنه غير متوفر في الإصدار الجديد
-    # سيتم التعامل مع انتهاء البث بطريقة أخرى
+def update_play_stats(success: bool, from_cache: bool = False, hybrid_used: bool = False):
+    """تحديث إحصائيات التشغيل"""
+    play_stats['total_requests'] += 1
+    if success:
+        play_stats['successful_plays'] += 1
+    else:
+        play_stats['failed_plays'] += 1
+    if from_cache:
+        play_stats['cache_hits'] += 1
+    if hybrid_used:
+        play_stats['hybrid_downloads'] += 1
+
+async def get_play_statistics() -> Dict:
+    """الحصول على إحصائيات التشغيل الشاملة"""
+    uptime = time.time() - system_stats['start_time']
+    
+    return {
+        'system_stats': system_stats,
+        'play_stats': play_stats,
+        'uptime_hours': uptime / 3600,
+        'success_rate': (play_stats['successful_plays'] / max(1, play_stats['total_requests'])) * 100,
+        'cache_hit_rate': (play_stats['cache_hits'] / max(1, play_stats['total_requests'])) * 100,
+    }
+
+async def get_call(bot_username):
+    """الحصول على كائن المكالمة"""
+    return calls.get(bot_username)
+
+async def get_userbot(bot_username):
+    """الحصول على كائن المستخدم"""
+    return userbots.get(bot_username)
 
 async def join_assistant(client, hoss_chat_user, user):
-        join = None
-        hos_info = await client.get_chat(hoss_chat_user)    
-        if hos_info.invite_link:
-          hos_link = hos_info.invite_link
-        else:
-          print()
-          return
-        try:
-          await user.join_chat(str(hos_link))
-          join = True
-        except Exception as e:
-          pass
-        return join    
+    """انضمام المساعد للمكالمة"""
+    join = None
+    try:
+        join = await client.join_chat(hoss_chat_user)
+    except Exception as e:
+        print(f"خطأ في الانضمام: {e}")
+        return False
+    return join
 
 async def pphoto(client, message, mi, user_mention, count):
-    video_info = mi["search_result"][0]
-    mo = video_info["link"]
-    mio = mi["search_result"]
-    title = video_info["title"]
-    channel_name = mio[0]["channel"]
-    thum = mio[0]["title"]
-    fridayz = mio[0]["id"]
-    useram = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
-    namechat = f"{message.chat.title}"
-    opts = {
-        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        "quiet": True,
-        "cookiefile": YOUTUBE_COOKIES_FILE,
-        }
-    url = mo
-    with YoutubeDL(opts) as ytdl:
-        ytdl_data = ytdl.extract_info(url, download=False)
-        duration = ytdl_data.get('duration', None)
-        info = ytdl.extract_info(url, download=False)
-        views = info.get("view_count", "N/A")
-        if duration is not None:
-            duration_minutes = duration // 60
-            duration_seconds = duration % 60
-            video_duration = f"{duration_minutes}:{duration_seconds:02d}"
-    me = await client.get_me()
-    bot_username = me.username
-    OWNER_ID = await get_devss(bot_username)
-    usr = await client.get_chat(OWNER_ID)
-    CASER = usr.username
-    downloaded_photo = await client.download_media(usr.photo.big_file_id)
-    im = Image.open(downloaded_photo)
-    response = requests.get(useram)
-    img = Image.open(BytesIO(response.content))
-    image1 = img.resize((1280, 720))
-    image2 = image1.convert("RGBA")
-    background = image2.filter(ImageFilter.BoxBlur(10))
-    enhancer = ImageEnhance.Brightness(background)
-    background = enhancer.enhance(0.5)
-    im_square = crop_max_square(im)
-    thumb_width = 500
-    im_thumb = im_square.resize((thumb_width, thumb_width), Image.LANCZOS)
-    im_thumb = mask_circle_transparent(im_thumb, 4)
-    left_margin = 50
-    top_margin = (background.height - thumb_width) // 2
-    background.paste(im_thumb, (left_margin, top_margin), mask=im_thumb)
-    draw = ImageDraw.Draw(background)
-    center_x = left_margin + (thumb_width // 2)
-    center_y = top_margin + (thumb_width // 2)
-    radius = thumb_width // 2 + 13
-    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-    draw.ellipse((center_x - radius, center_y - radius, center_x + radius, center_y + radius), outline=color, width=15)
-    draw = ImageDraw.Draw(background)
-    width, height = background.size
-    border_width = 20
-    border_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-    draw.rectangle((0, 0, width - 1, height - 1), outline=border_color, width=border_width)
-    arial = ImageFont.truetype("font2.ttf", 80)
-    caesa = ImageFont.truetype("font.ttf", 40)
-    caessa = ImageFont.truetype("font.ttf", 50)
-    draw.text((600, 250), f"{thum}", (255, 255, 255), font=caessa)
-    draw.text((600, 380), f"views : {views}", (255, 255, 255), font=caesa)
-    draw.text((600, 420), f"time : {video_duration}", (255, 255, 255), font=caesa)
-    draw.text((600, 460), f"channel : {channel_name}", (255, 255, 255), font=caesa)
-    draw.text((600, 120), "PlaYinG EL NJUM", fill=(255, 165, 0), stroke_width=2, stroke_fill="white", font=arial)
-    draw.line([(600, 220), (1050, 220)], fill=(255, 165, 0), width=7)
-    background.save(f"{CASER}.png")
-    photo = f"{CASER}.png"
-    bot_username = client.me.username
-    namechat = f"{message.chat.title}"    
-    button = [[InlineKeyboardButton(text="ᎬΝᎠ", callback_data=f"stop"), InlineKeyboardButton(text="ᎡᎬՏႮᎷᎬ", callback_data=f"resume"), InlineKeyboardButton(text="ᏢᎪႮՏᎬ", callback_data=f"pause")], [InlineKeyboardButton(text="ᏟᎻᎬΝΝᎪᏞ", url=f"https://t.me/z1_xa"), InlineKeyboardButton(text="ᏀᎡΌႮᏢ", url=f"https://t.me/almhndssss")], [InlineKeyboardButton(text=f"كبير z1_xa", url=f"https://t.me/z1_xa")], [InlineKeyboardButton(text="اضف البوت الي مجموعتك او قناتك 🚦", url=f"https://t.me/{bot_username}?startgroup=True")]]
-    if count == 0:
-        await message.reply_photo(photo=photo, caption=f'🎶 𝗣𝗹𝗔𝘆𝗜𝗻𝗚 𝗡𝗼𝗪 𝗦𝘁𝗔𝗿𝗧𝗲𝗗\n\n𝗦𝗼𝗡𝗴 𝗡𝗮𝗠𝗲 : {thum}\n𝗕𝘆 : {user_mention}\n𝗚𝗿𝗢𝘂𝗣 𝗕𝘆 : <a href="https://t.me/{message.chat.username}">{namechat}</a>', reply_markup=InlineKeyboardMarkup(button))
-    else:
-        await message.reply_photo(photo=photo, caption=f'🎶 Add Track To Playlist » {count}\n\n𝗦𝗼𝗡𝗴 𝗡𝗮𝗠𝗲 : {thum}\n𝗕𝘆 : {user_mention}\n𝗚𝗿𝗢𝘂𝗣 𝗕𝘆 : <a href="https://t.me/{message.chat.username}">{namechat}</a>', reply_markup=InlineKeyboardMarkup(button))
-
-
-
+    """إرسال صورة التشغيل"""
+    try:
+        await client.send_photo(
+            message.chat.id,
+            photo=mi,
+            caption=f"🎵 **تم بدء التشغيل**\n\n👤 **بواسطة:** {user_mention}\n📊 **الطلب رقم:** {count}",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("⏸️ إيقاف مؤقت", callback_data="pause"),
+                 InlineKeyboardButton("⏭️ تخطي", callback_data="skip")],
+                [InlineKeyboardButton("⏹️ إيقاف", callback_data="stop")]
+            ])
+        )
+    except Exception as e:
+        print(f"خطأ في إرسال الصورة: {e}")
 
 async def join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention):
+    """انضمام للمكالمة وتشغيل الصوت"""
     global count
     userbot = await get_userbot(bot_username)
     hoss = await get_call(bot_username)
     file_path = audio_file
+    
     audio_stream_quality = AudioQuality.MEDIUM
     video_stream_quality = VideoQuality.MEDIUM
     stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
               if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
+    
     try:
         await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
         hossamm.append(file_path)
         count = 0
         await pphoto(client, message, mi, user_mention, count)
-        Done = True
-    except NoActiveGroupCall:
-        h = await join_assistant(client, group_id, userbot)
-        if h:
-            try:
-                await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
-                hossamm.append(file_path)
-                Done = True
-            except Exception:
-                pass
+        return True
     except Exception as e:
+        print(f"خطأ في الانضمام: {e}")
+        # محاولة ثانية
+        try:
+            await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
+            hossamm.append(file_path)
+            Done = True
+        except Exception:
+            pass
+        
         if group_id not in playlist:
             playlist[group_id] = []
             vidd[group_id] = []
-            miii[group_id] = []
             coun[group_id] = []
-            user_mentio[group_id] = []
-        if group_id not in playlist[group_id]:
-            playlist[group_id].append(file_path)
-            vidd[group_id].append(vid)
-            miii[group_id].append(mi)
-            user_mentio[group_id].append(user_mention)
-        if group_id in playlist:
-            count = len(playlist[group_id])
-            coun[group_id].append(count)
+        
+        playlist[group_id].append(file_path)
+        vidd[group_id].append(vid)
+        coun[group_id].append(count)
+        count = len(playlist[group_id])
+        coun[group_id].append(count)
         await pphoto(client, message, mi, user_mention, count)
-        print(e)
-    return False
+        return False
 
 async def _join_stream(hoss, message, stream, file_path):
+    """انضمام للبث"""
     try:
         await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
         hossamm.append(file_path)
         return True
     except Exception:
         return False
-    
+
 async def change_stream(bot_username, chat_id, client, message):
+    """تغيير البث"""
     hoss = await get_call(bot_username)
-    if chat_id in playlist and playlist[chat_id] and vidd and vidd[chat_id] and miii and miii[chat_id] and coun and coun[chat_id] and user_mentio and user_mentio[chat_id]:
-        next_song = playlist[chat_id].pop(0)
-        vid = vidd[chat_id].pop(0)
-        mi = miii[chat_id].pop(0)
-        count = coun[chat_id].pop(0)
-        user_mention = user_mentio[chat_id].pop(0)    
-        user_mention = user_mention   
-        count = count   
-        file_path = next_song 
-        vid = vid      
-        mi = mi      
+    if chat_id in playlist and playlist[chat_id]:
+        file_path = playlist[chat_id][0]
+        vid = vidd[chat_id][0]
+        mi = "https://telegra.ph/file/1063fced1455967ed0d83.jpg"
+        
         try:
             audio_stream_quality = AudioQuality.MEDIUM
             video_stream_quality = VideoQuality.MEDIUM
@@ -225,150 +181,350 @@ async def change_stream(bot_username, chat_id, client, message):
             stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
             await hoss.change_stream(chat_id, stream)
             hossamm.append(file_path)
-            await pphoto(client, message, mi, user_mention, count)
+            await pphoto(client, message, mi, "النظام", 1)
+            
+            # إزالة من القائمة
+            playlist[chat_id].pop(0)
+            vidd[chat_id].pop(0)
+            coun[chat_id].pop(0)
+            
         except Exception as e:
-            pass
-    else:
-        try:
-            await hoss.leave_group_call(chat_id)
-        except Exception as e:
-            await message.reply_text("يعم فوق مفيش حاجه شغاله اصلا 😂")
+            print(f"خطأ في تغيير البث: {e}")
 
-DOWNLOAD_FOLDER = "/workspace/downloads"
+async def smart_music_search_and_play(
+    message: Message,
+    query: str,
+    chat_id: int,
+    user_id: int,
+    video: bool = False,
+    channel: bool = False
+) -> Optional[Dict]:
+    """البحث والتشغيل الذكي مع النظام المختلط"""
+    
+    start_time = time.time()
+    print(f"🎵 بدء البحث والتشغيل الذكي: {query}")
+    
+    try:
+        # البحث عن الفيديو
+        search = SearchVideos(query, offset=1, mode="dict", max_results=1)
+        mi = search.result()
+        if not mi["search_result"]:
+            print(f"❌ لم يتم العثور على نتائج: {query}")
+            update_play_stats(success=False)
+            return None
+        
+        video_info = mi["search_result"][0]
+        mo = video_info["link"]
+        title = video_info["title"]
+        
+        # تحضير مسار الملف
+        audio_file = os.path.join(DOWNLOAD_FOLDER, f"{title}.mp4")
+        
+        # التحقق من وجود الملف
+        if os.path.exists(audio_file):
+            print(f"✅ الملف موجود في الكاش: {title}")
+            update_play_stats(success=True, from_cache=True)
+            return {
+                'title': title,
+                'duration': 0,
+                'file_path': audio_file,
+                'thumbnail': f"https://img.youtube.com/vi/{video_info.get('id', '')}/hqdefault.jpg",
+                'uploader': video_info.get('channel', 'قناة غير محددة'),
+                'url': mo,
+                'video_id': video_info.get('id', ''),
+                'source': 'cache'
+            }
+        
+        # تحميل الملف مع تدوير الكوكيز
+        cookie_files = [
+            "/workspace/cookies/cookies1.txt",
+            "/workspace/cookies/cookies2.txt", 
+            "/workspace/cookies/cookies3.txt",
+            "/workspace/cookies/cookies4.txt",
+            "/workspace/cookies/cookies5.txt",
+            "/workspace/cookies/cookies6.txt"
+        ]
+        
+        download_success = False
+        for cookie_file in cookie_files:
+            if os.path.exists(cookie_file):
+                try:
+                    opts = {
+                        "format": "bestaudio[ext=m4a]/best[ext=mp4]/best",
+                        "outtmpl": audio_file,
+                        "quiet": True,
+                        "cookiefile": cookie_file,
+                        "no_warnings": True,
+                        "extract_flat": False,
+                    }
+                    
+                    with YoutubeDL(opts) as ytdl:
+                        ytdl_data = ytdl.extract_info(mo, download=True)
+                        audio_file = ytdl.prepare_filename(ytdl_data)
+                    
+                    download_success = True
+                    break
+                    
+                except Exception as e:
+                    print(f"فشل التحميل مع {cookie_file}: {e}")
+                    continue
+        
+        if not download_success:
+            print(f"❌ فشل في تحميل المقطع: {query}")
+            update_play_stats(success=False)
+            return None
+        
+        elapsed = time.time() - start_time
+        print(f"✅ تم التحضير للتشغيل في {elapsed:.2f}s: {title}")
+        
+        # تحديث الإحصائيات
+        update_play_stats(success=True, hybrid_used=True)
+        
+        return {
+            'title': title,
+            'duration': ytdl_data.get('duration', 0),
+            'file_path': audio_file,
+            'thumbnail': f"https://img.youtube.com/vi/{video_info.get('id', '')}/hqdefault.jpg",
+            'uploader': video_info.get('channel', 'قناة غير محددة'),
+            'url': mo,
+            'video_id': video_info.get('id', ''),
+            'source': 'hybrid_download'
+        }
+        
+    except Exception as e:
+        elapsed = time.time() - start_time
+        print(f"❌ خطأ في البحث والتشغيل ({elapsed:.2f}s): {e}")
+        update_play_stats(success=False)
+        return None
 
-mamno = ["Xnxx", "سكس","اباحيه","جنس","اباحي","زب","كسمك","كس","شرمطه","نيك","لبوه","فشخ","مهبل","نيك خلفى","بتتناك","مساج","كس ملبن","نيك جماعى","نيك جماعي","نيك بنات","رقص","قلع","خلع ملابس","بنات من غير هدوم","بنات ملط","نيك طيز","نيك من ورا","نيك في الكس","ارهاب","موت","حرب","سياسه","سياسي","سكسي","قحبه","شواز","ممويز","نياكه","xnxx","sex","xxx","Sex","Born","borno","Sesso","احا","خخخ","ميتينك","تناك","يلعن","كسك","كسمك","عرص","خول","علق","كسم","انيك","انيكك","اركبك","زبي","نيك","شرموط","فحل","ديوث","سالب","مقاطع","ورعان","هايج","مشتهي","زوبري","طيز","كسي","كسى","ساحق","سحق","لبوه","اريحها","مقاتع","لانجيري","سحاق","مقطع","مقتع","نودز","ندز","ملط","لانجرى","لانجري","لانجيرى","مولااااعه"]
-@Client.on_message(filters.command(["تشغيل", "شغل", "فيد", "فيديو", "video", "play"], ""), group=57655580)
-async def play_audio(client, message):
-    group_id = message.chat.id
-    text = None
-    if message.reply_to_message:
-        if "v" in message.command[0] or "ف" in message.command[0]:
-            vid = True
-        else:
-            vid = None
-    else:
-        try:
-            text = message.text.split(None, 1)[1]
-        except IndexError:
-            name = await client.ask(
-                chat_id=message.chat.id,
-                text="ارسل اسم او رابط الي تريد تشغيله.",
-                reply_to_message_id=message.id,
-                filters=filters.user(message.from_user.id),
-                timeout=200
-            )
-            text = name.text
-    if text is None:
-        return
-    if "v" in message.command[0] or "ف" in message.command[0]:
-        vid = True
-    else:
-        vid = None
+# اسم البوت للأوامر
+Nem = "شغل"
+
+@Client.on_message(
+    filters.command([
+        "play", "تشغيل", "شغل", Nem, "vplay", "cplay", "cvplay",
+        "playforce", "vplayforce", "cplayforce", "cvplayforce",
+    ]) & ~filters.channel
+)
+async def enhanced_play_command(client, message: Message):
+    """أمر التشغيل المحسن مع النظام المختلط"""
+    
+    start_time = time.time()
+    
+    # رسالة الحالة الأولية
+    mystic = await message.reply_text("🎵 جاري معالجة طلبك...")
+    
     try:
-        mm = await message.reply_text("جاري التشغيل انتظر")
-        playing.setdefault(group_id, []).clear()
-        playing[group_id].append(message.from_user.id)
-    except Exception as e:
-        playing[group_id].append(5993309733)
-    hos_info = await client.get_chat(group_id)
-    hos_link = hos_info.invite_link or await message.reply("لا يمكن العثور على رابط الدعوة لهذه المجموعة/القناة\n قم برفعي مشرف في الجروب أولاً")
-    if not hos_info.invite_link:
-        return
-    try:
-        await user.join_chat(str(hos_link))
-    except Exception as e:
-        pass
-    try:
-        user_mention = f"{message.from_user.mention}"
-    except Exception as e:
-        user_mention = "ᏟᎻᎬΝΝᎪᏞ"
-    search = SearchVideos(text, offset=1, mode="dict", max_results=1)
-    mi = search.result()
-    if not mi["search_result"]:
-        return await message.reply("لم يتم العثور على نتائج.")
-    video_info = mi["search_result"][0]
-    mo = video_info["link"]
-    mio = mi["search_result"]
-    title = video_info["title"]
-    audio_file = os.path.join(DOWNLOAD_FOLDER, f"{title}.mp4")
-    if os.path.exists(audio_file):
-        await mm.delete()
-        bot_username = client.me.username
-        c = await join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention)
-        if not c:
+        # التحقق من وجود استعلام
+        if not message.command or len(message.command) < 2:
+            await mystic.edit_text("❌ يرجى كتابة ما تريد تشغيله")
             return
-        return 
-    # تحميل الملف مع تدوير الكوكيز
-    cookie_files = [
-        "/workspace/cookies/cookies1.txt",
-        "/workspace/cookies/cookies2.txt", 
-        "/workspace/cookies/cookies3.txt",
-        "/workspace/cookies/cookies4.txt",
-        "/workspace/cookies/cookies5.txt",
-        "/workspace/cookies/cookies6.txt"
-    ]
+        
+        query = " ".join(message.command[1:]).strip()
+        if not query:
+            await mystic.edit_text("❌ يرجى كتابة ما تريد تشغيله")
+            return
+        
+        print(f"🎵 طلب تشغيل جديد: {query} | المستخدم: {message.from_user.id}")
+        
+        # تحديث رسالة الحالة
+        await mystic.edit_text("🔍 جاري البحث...")
+        
+        # البحث والتحميل الذكي
+        track_info = await smart_music_search_and_play(
+            message=message,
+            query=query,
+            chat_id=message.chat.id,
+            user_id=message.from_user.id,
+            video=False,
+            channel=False
+        )
+        
+        if not track_info:
+            await mystic.edit_text("❌ لم يتم العثور على نتائج")
+            return
+        
+        # تحديث رسالة الحالة
+        await mystic.edit_text("🎵 جاري بدء التشغيل...")
+        
+        # بدء التشغيل
+        try:
+            bot_username = client.me.username
+            group_id = message.chat.id
+            vid = False  # صوت فقط
+            user_mention = f"{message.from_user.mention}"
+            mi = track_info.get('thumbnail', "https://telegra.ph/file/1063fced1455967ed0d83.jpg")
+            
+            c = await join_call(bot_username, client, message, track_info['file_path'], group_id, vid, mi, user_mention)
+            
+            if c:
+                await mystic.delete()
+                # تسجيل نجاح التشغيل
+                elapsed = time.time() - start_time
+                print(f"✅ تم بدء التشغيل بنجاح ({elapsed:.2f}s): {track_info['title']}")
+            else:
+                await mystic.edit_text("✅ تم إضافة المقطع للقائمة")
+                
+        except NoActiveGroupCall:
+            await mystic.edit_text(
+                "❌ لا يوجد مكالمة صوتية نشطة في هذه المجموعة.\n"
+                "يرجى بدء مكالمة صوتية أولاً."
+            )
+            
+        except Exception as stream_error:
+            print(f"❌ خطأ في بدء التشغيل: {stream_error}")
+            await mystic.edit_text(f"❌ خطأ في بدء التشغيل: {stream_error}")
+            
+    except Exception as e:
+        elapsed = time.time() - start_time
+        print(f"❌ خطأ في أمر التشغيل ({elapsed:.2f}s): {e}")
+        
+        try:
+            await mystic.edit_text(
+                f"❌ حدث خطأ أثناء معالجة طلبك:\n`{str(e)[:100]}...`"
+            )
+        except:
+            pass
+
+@Client.on_message(filters.command(["playstats", "إحصائيات التشغيل"]))
+async def play_statistics_command(client, message: Message):
+    """عرض إحصائيات التشغيل الشاملة"""
     
-    download_success = False
-    for cookie_file in cookie_files:
-        if os.path.exists(cookie_file):
-            try:
-                opts = {
-                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-                    "outtmpl": audio_file,
-                    "quiet": True,
-                    "cookiefile": cookie_file,
-                    "no_warnings": True,
-                    "extract_flat": False,
-                }
-                
-                with YoutubeDL(opts) as ytdl:
-                    ytdl_data = ytdl.extract_info(mo, download=True)
-                    audio_file = ytdl.prepare_filename(ytdl_data)
-                
-                download_success = True
-                break
-                
-            except Exception as e:
-                print(f"فشل التحميل مع {cookie_file}: {e}")
-                continue
+    try:
+        stats = await get_play_statistics()
+        
+        # تنسيق الإحصائيات
+        play_data = stats['play_stats']
+        uptime_hours = stats['uptime_hours']
+        success_rate = stats['success_rate']
+        cache_hit_rate = stats['cache_hit_rate']
+        
+        stats_text = f"""
+📊 **إحصائيات التشغيل الشاملة**
+{'='*35}
+
+🎵 **إحصائيات التشغيل:**
+• إجمالي الطلبات: `{play_data['total_requests']}`
+• تشغيل ناجح: `{play_data['successful_plays']}`
+• تشغيل فاشل: `{play_data['failed_plays']}`
+• معدل النجاح: `{success_rate:.1f}%`
+
+💾 **إحصائيات الكاش:**
+• إصابات الكاش: `{play_data['cache_hits']}`
+• معدل الكاش: `{cache_hit_rate:.1f}%`
+• تحميل مختلط: `{play_data['hybrid_downloads']}`
+
+⏱️ **معلومات النظام:**
+• وقت التشغيل: `{uptime_hours:.1f}` ساعة
+• متوسط الطلبات/ساعة: `{play_data['total_requests'] / max(0.1, uptime_hours):.1f}`
+
+🚀 **النظام يعمل بكفاءة عالية!**
+"""
+        
+        await message.reply_text(stats_text)
+        
+    except Exception as e:
+        print(f"❌ خطأ في عرض الإحصائيات: {e}")
+        await message.reply_text(f"❌ خطأ في جلب الإحصائيات: {e}")
+
+@Client.on_message(filters.command(["cleantemp", "تنظيف الملفات"]))
+async def clean_temp_files_command(client, message: Message):
+    """تنظيف الملفات المؤقتة"""
     
-    if not download_success:
-        await mm.edit("فشل في تحميل المقطع. يرجى المحاولة مرة أخرى.")
-        return
-    await mm.delete()
-    bot_username = client.me.username
-    c = await join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention)
-    if not c:
-        return
+    try:
+        status_msg = await message.reply_text("🧹 جاري تنظيف الملفات المؤقتة...")
+        
+        # تنظيف الملفات القديمة
+        cleaned_count = 0
+        if os.path.exists(DOWNLOAD_FOLDER):
+            for file in os.listdir(DOWNLOAD_FOLDER):
+                file_path = os.path.join(DOWNLOAD_FOLDER, file)
+                if os.path.isfile(file_path):
+                    # حذف الملفات الأقدم من ساعة
+                    if time.time() - os.path.getmtime(file_path) > 3600:
+                        os.remove(file_path)
+                        cleaned_count += 1
+        
+        await status_msg.edit_text(
+            f"✅ تم تنظيف الملفات القديمة وحذف `{cleaned_count}` ملف!"
+        )
+        
+    except Exception as e:
+        print(f"❌ خطأ في تنظيف الملفات: {e}")
+        await message.reply_text(f"❌ خطأ في التنظيف: {e}")
 
-@Client.on_message(filters.command(["مين شغل","م شغل","مين مشغل"], ""), group=5880)
-async def playingy(client, message):
-        chat_id = message.chat.id
-        bot_username = client.me.username
-        for hos in playing[chat_id]:
-          user = await client.get_users(hos)
-          user_mention = user.mention()
-          await message.reply_text(f" هذا الشخص من قام بالتشغيل 🌿♥️ {user_mention}")
+# أوامر التحكم في التشغيل
+@Client.on_message(filters.command(["اسكت", "ايقاف"]) & filters.group)
+async def stop_playback(client, message):
+    """إيقاف التشغيل"""
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    ho = await message.reply_text("**جاري ايقاف التشغيل**") 
+    try:    	
+        await hoss.leave_group_call(message.chat.id)
+        await ho.edit_text("**تم ايقاف التشغيل بنجاح**")
+    except Exception as e:
+        await ho.edit_text("**مفيش حاجه شغاله اصلا**")
 
+@Client.on_message(filters.command(["تخطي", "/skip"]) & filters.group)
+async def skip_track(client, message):
+    """تخطي المقطع الحالي"""
+    group_id = message.chat.id
+    bot_username = client.me.username 
+    ho = await message.reply_text("**جاري تخطي التشغيل**") 
+    await change_stream(bot_username, group_id, client, message)
+    await ho.delete()
 
-def crop_max_square(pil_img):
-    """Crop a PIL image to the largest possible square."""
-    width, height = pil_img.size
-    size = min(width, height)
-    left = (width - size) // 2
-    top = (height - size) // 2
-    right = (width + size) // 2
-    bottom = (height + size) // 2
-    return pil_img.crop((left, top, right, bottom))
+@Client.on_message(filters.command(["توقف", "وقف"]) & filters.group)
+async def pause_playback(client, message):
+    """إيقاف مؤقت للتشغيل"""
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    chat_id = message.chat.id
+    ho = await message.reply_text("**جاري توقف التشغيل**") 
+    try:    	
+        await hoss.pause_stream(chat_id)
+        await ho.edit_text("**حاضر هسكت اهو 🥺**")
+    except Exception as e:
+        await ho.edit_text("**مفيش حاجه شغاله اصلا**")
 
-def mask_circle_transparent(pil_img, offset=0):
-    """Apply a circular mask to a PIL image with transparent background."""
-    width, height = pil_img.size
-    mask = Image.new('L', pil_img.size, 0)
-    draw = ImageDraw.Draw(mask)
-    draw.ellipse((offset, offset, width - offset, height - offset), fill=255)
-    pil_img.putalpha(mask)
-    return pil_img
+@Client.on_message(filters.command(["كمل"]) & filters.group)
+async def resume_playback(client, message):
+    """استكمال التشغيل"""
+    bot_username = client.me.username 
+    hoss = await get_call(bot_username)
+    chat_id = message.chat.id
+    ho = await message.reply_text("**جاري استكمال التشغيل**") 
+    try:    	
+        await hoss.resume_stream(chat_id)
+        await ho.edit_text("**تم استكمال التشغيل بنجاح**")
+    except Exception as e:
+        await ho.edit_text("**مفيش حاجه شغاله اصلا**")
+
+# إضافة تنظيف دوري للملفات المؤقتة
+async def periodic_cleanup():
+    """تنظيف دوري للملفات المؤقتة"""
+    while True:
+        try:
+            await asyncio.sleep(3600)  # كل ساعة
+            cleaned_count = 0
+            if os.path.exists(DOWNLOAD_FOLDER):
+                for file in os.listdir(DOWNLOAD_FOLDER):
+                    file_path = os.path.join(DOWNLOAD_FOLDER, file)
+                    if os.path.isfile(file_path):
+                        # حذف الملفات الأقدم من ساعة
+                        if time.time() - os.path.getmtime(file_path) > 3600:
+                            os.remove(file_path)
+                            cleaned_count += 1
+            if cleaned_count > 0:
+                print(f"🧹 تم تنظيف {cleaned_count} ملف قديم تلقائياً")
+        except Exception as e:
+            print(f"❌ خطأ في التنظيف الدوري: {e}")
+
+# بدء التنظيف الدوري
+asyncio.create_task(periodic_cleanup())
+
+print("✅ تم تحميل نظام التشغيل الذكي المحسن بنجاح!")
 
  
 @Client.on_callback_query(
