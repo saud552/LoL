@@ -10,12 +10,7 @@ from datetime import datetime, timedelta
 from youtube_search import YoutubeSearch
 from youtubesearchpython import SearchVideos
 import pytgcalls
-from pytgcalls.types.input_stream.quality import (HighQualityAudio,
-                                                  HighQualityVideo,
-                                                  LowQualityAudio,
-                                                  LowQualityVideo,
-                                                  MediumQualityAudio,
-                                                  MediumQualityVideo)
+from pytgcalls.types import AudioQuality, VideoQuality
 from typing import Union
 from pyrogram import Client, filters 
 from pyrogram import Client as client
@@ -24,8 +19,8 @@ from pyrogram.errors import (ChatAdminRequired,
                              UserNotParticipant)
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ChatType, ChatMemberStatus
-from pytgcalls import PyTgCalls, StreamType
-from pytgcalls.exceptions import (NoActiveGroupCall,TelegramServerError,AlreadyJoinedError)
+from pytgcalls import PyTgCalls
+from pytgcalls.exceptions import (NoActiveGroupCall,)
 from pytgcalls.types import (JoinedGroupCallParticipant,
                              LeftGroupCallParticipant, Update)
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
@@ -167,12 +162,12 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
     userbot = await get_userbot(bot_username)
     hoss = await get_call(bot_username)
     file_path = audio_file
-    audio_stream_quality = MediumQualityAudio()
-    video_stream_quality = MediumQualityVideo()
+    audio_stream_quality = AudioQuality.MEDIUM
+    video_stream_quality = VideoQuality.MEDIUM
     stream = (AudioVideoPiped(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
               if vid else AudioPiped(file_path, audio_parameters=audio_stream_quality))
     try:
-        await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType().pulse_stream)
+        await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
         hossamm.append(file_path)
         count = 0
         await pphoto(client, message, mi, user_mention, count)
@@ -181,12 +176,12 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
         h = await join_assistant(client, group_id, userbot)
         if h:
             try:
-                await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType().pulse_stream)
+                await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
                 hossamm.append(file_path)
                 Done = True
             except Exception:
                 pass
-    except AlreadyJoinedError:
+    except :
         if group_id not in playlist:
             playlist[group_id] = []
             vidd[group_id] = []
@@ -210,7 +205,7 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
 
 async def _join_stream(hoss, message, stream, file_path):
     try:
-        await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType().pulse_stream)
+        await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
         hossamm.append(file_path)
         return True
     except Exception:
@@ -230,8 +225,8 @@ async def change_stream(bot_username, chat_id, client, message):
         vid = vid      
         mi = mi      
         try:
-            audio_stream_quality = MediumQualityAudio()
-            video_stream_quality = MediumQualityVideo()
+            audio_stream_quality = AudioQuality.MEDIUM
+            video_stream_quality = VideoQuality.MEDIUM
             hossamm.clear()
             stream = (AudioVideoPiped(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) if vid else AudioPiped(file_path, audio_parameters=audio_stream_quality))
             await hoss.change_stream(chat_id, stream)

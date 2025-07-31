@@ -18,7 +18,7 @@ from CASERr.daty import get_call, get_userbot, get_dev, get_logger
 from CASERr.CASERr import get_channel, devchannel, source, caes, devgroup, devuser, group, casery, johned, photosource, caserid
 from pytgcalls import PyTgCalls, StreamType
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
-from pytgcalls.exceptions import NoActiveGroupCall, TelegramServerError, AlreadyJoinedError
+from pytgcalls.exceptions import NoActiveGroupCall,  
 from pyrogram.errors import ChatAdminRequired, UserAlreadyParticipant, UserNotParticipant
 from pyrogram import Client
 from requests import Session
@@ -147,7 +147,7 @@ async def play_azan(chat_id, bot_username, client):
         await hoss.join_group_call(
             chat_id,
             stream,
-            stream_type=StreamType().pulse_stream,
+            stream_type=StreamType.PULSE_STREAM,
         )
     except NoActiveGroupCall:
         try:
@@ -156,13 +156,13 @@ async def play_azan(chat_id, bot_username, client):
             await client.send_message(chat_id, f"يرجي تشغيل المكالمه اولا..!🎧")
     except TelegramServerError:
         await client.send_message(chat_id, "عذرا هناك مشكلات في سيرفر التليجرام")
-    except AlreadyJoinedError:
+    except :
         await stop_azan(bot_username)
         try:
             await hoss.join_group_call(
                 chat_id,
                 stream,
-                stream_type=StreamType().pulse_stream,
+                stream_type=StreamType.PULSE_STREAM,
             )
         except Exception as e:
             await client.send_message(chat_id, f"الكول مش شغال مش هقدر اطلع أأذن 😔💔")
@@ -254,7 +254,7 @@ async def play_azkar(chat_id, bot_username, client):
         await hoss.join_group_call(
             chat_id,
             stream,
-            stream_type=StreamType().pulse_stream,
+            stream_type=StreamType.PULSE_STREAM,
         )
     except NoActiveGroupCall:
         try:
@@ -263,13 +263,13 @@ async def play_azkar(chat_id, bot_username, client):
             await client.send_message(chat_id, f"يرجي تشغيل المكالمه اولا..!🎧")
     except TelegramServerError:
         await client.send_message(chat_id, "عذرا هناك مشكلات في سيرفر التليجرام")
-    except AlreadyJoinedError:
+    except :
         await stop_azan(bot_username)
         try:
             await hoss.join_group_call(
                 chat_id,
                 stream,
-                stream_type=StreamType().pulse_stream,
+                stream_type=StreamType.PULSE_STREAM,
             )
         except Exception as e:
             await client.send_message(chat_id, f"يرجي تشغيل المكالمه اولا..!🎧")
