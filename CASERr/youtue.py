@@ -105,16 +105,19 @@ active_requests = {}
 # دالة التحميل المشتركة
 async def download_audio(client, message, text):
     user_id = message.from_user.id if message.from_user else 0
+    message_id = message.id
     request_key = f"{user_id}_{text.lower().strip()}"
+    unique_key = f"{user_id}_{message_id}_{text.lower().strip()}"
     
     # فحص إذا كان هناك طلب نشط لنفس المستخدم ونفس النص
     if request_key in active_requests:
-        print(f"تجاهل طلب مكرر: {text}")
+        print(f"🚫 تجاهل طلب مكرر: {text} (رسالة {message_id})")
         return  # تجاهل الطلب المكرر
     
     # تسجيل الطلب كنشط
     active_requests[request_key] = time.time()
-    print(f"بدء معالجة طلب جديد: {text}")
+    print(f"🔄 بدء معالجة طلب جديد: {text} (من المستخدم: {user_id})")
+    print(f"📝 الطلبات النشطة حالياً: {len(active_requests)}")
     
     try:
         # فحص الكلمات المحظورة
@@ -128,7 +131,12 @@ async def download_audio(client, message, text):
         # محاولة التحميل مع تدوير الكوكيز
         max_retries = len(cookie_manager.cookies_files) if cookie_manager.cookies_files else 1
         
+        download_success = False  # متغير لتتبع نجاح التحميل
+        
         for attempt in range(max_retries):
+            if download_success:  # إذا نجح التحميل، أوقف الحلقة
+                print(f"⏹️ إيقاف المحاولات المتبقية بعد نجاح التحميل")
+                break
             try:
                 # الحصول على ملف الكوكيز
                 cookie_file = cookie_manager.get_next_cookie()
@@ -187,7 +195,9 @@ async def download_audio(client, message, text):
                 # تنظيف الملفات المؤقتة
                 clean_temp_files(audio_file, sedlyf)
                 
+                download_success = True  # تحديد أن التحميل نجح
                 print(f"✅ تم إرسال الملف بنجاح: {title}")
+                print(f"🚫 إيقاف جميع المحاولات الأخرى للطلب: {text}")
                 return  # نجح التحميل، خروج من الدالة بالكامل
                 
             except Exception as e:
@@ -215,7 +225,7 @@ async def download_audio(client, message, text):
             print(f"تم إنهاء معالجة الطلب: {text}")
 
 # الأوامر مع /
-@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)
+@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=1)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
     if await johned(client, message):
@@ -230,14 +240,18 @@ async def gigshgxvkdnnj(client, message):
     await download_audio(client, message, text)
 
 # الأوامر بدون /
-@Client.on_message(filters.text & ~filters.command([""]), group=71328935)
+@Client.on_message(filters.text & ~filters.command([""]) & ~filters.bot, group=2)
 async def handle_text_download(client, message):
     bot_username = client.me.username
     if await johned(client, message):
      return
     
-    # تجاهل الرسائل التي تبدأ بـ /
-    if message.text.startswith('/'):
+    # تجاهل الرسائل التي تبدأ بـ / أو تحتوي على @
+    if message.text.startswith('/') or '@' in message.text:
+        return
+    
+    # تجاهل الردود على الرسائل
+    if message.reply_to_message:
         return
     
     # فحص إذا كان النص يبدأ بأحد الأوامر بدون /
