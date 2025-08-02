@@ -99,96 +99,120 @@ def clean_temp_files(*files):
         except Exception as e:
             print(f"خطأ في حذف الملف {file_path}: {e}")
 
+# متغير لتتبع الطلبات النشطة لمنع التكرار
+active_requests = {}
+
 # دالة التحميل المشتركة
 async def download_audio(client, message, text):
-    # فحص الكلمات المحظورة
-    if check_forbidden_words(text):
-        return await message.reply_text("لا يمكن تنزيل هذا❌")  
+    user_id = message.from_user.id if message.from_user else 0
+    request_key = f"{user_id}_{text.lower().strip()}"
     
-    h = await message.reply_text("جاري التحميل...")
-    audio_file = None
-    sedlyf = None
+    # فحص إذا كان هناك طلب نشط لنفس المستخدم ونفس النص
+    if request_key in active_requests:
+        print(f"تجاهل طلب مكرر: {text}")
+        return  # تجاهل الطلب المكرر
     
-    # محاولة التحميل مع تدوير الكوكيز
-    max_retries = len(cookie_manager.cookies_files) if cookie_manager.cookies_files else 1
+    # تسجيل الطلب كنشط
+    active_requests[request_key] = time.time()
+    print(f"بدء معالجة طلب جديد: {text}")
     
-    for attempt in range(max_retries):
-        try:
-            # الحصول على ملف الكوكيز
-            cookie_file = cookie_manager.get_next_cookie()
-            if not cookie_file:
-                await h.delete()
-                return await message.reply_text("لا توجد ملفات كوكيز متاحة")
-            
-            # البحث في YouTube
-            search = SearchVideos(text, offset=1, mode="dict", max_results=1)
-            mi = search.result()
-            
-            if not mi or not mi.get("search_result") or len(mi["search_result"]) == 0:
-                await h.delete()
-                return await message.reply_text("لم يتم العثور على نتائج للبحث المطلوب")
-            
-            mio = mi["search_result"]
-            mo = mio[0]["link"]
-            thum = mio[0]["title"]
-            fridayz = mio[0]["id"]
-            
-            # تحميل الصورة المصغرة
-            kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
-            sedlyf = wget.download(kekme, bar=None)
-            
-            # إعدادات التحميل مع الكوكيز الحالي
-            opts = {
-                'format': 'bestaudio[ext=m4a]', 
-                'outtmpl': '%(title)s.%(ext)s', 
-                "cookiefile": cookie_file
-            }
-            
-            with YoutubeDL(opts) as ytdl:
-                ytdl_data = ytdl.extract_info(mo, download=True)
-                audio_file = ytdl.prepare_filename(ytdl_data)
-            
-            # إعداد الرسالة
-            capy = f"[{thum}]({mo})"
-            duration = int(ytdl_data.get("duration", 0))
-            title = str(ytdl_data.get("title", "Unknown"))
-            performer = str(ytdl_data.get("uploader", "Unknown"))
-            
-            await h.delete()  # حذف رسالة "جاري التحميل..."
-            
-            # إرسال الملف الصوتي
-            await client.send_audio(
-                message.chat.id, 
-                audio=audio_file, 
-                duration=duration, 
-                title=title, 
-                performer=performer, 
-                file_name=title, 
-                thumb=sedlyf,
-                caption=capy
-            )
-            
-            # تنظيف الملفات المؤقتة
-            clean_temp_files(audio_file, sedlyf)
-            return  # نجح التحميل، خروج من الحلقة
-            
-        except Exception as e:
-            print(f"محاولة {attempt + 1} فشلت مع ملف الكوكيز {os.path.basename(cookie_file) if cookie_file else 'غير محدد'}: {e}")
-            
-            # تنظيف الملفات في حالة الخطأ
-            clean_temp_files(audio_file, sedlyf)
-            
-            # إذا كانت هذه المحاولة الأخيرة
-            if attempt == max_retries - 1:
-                try:
+    try:
+        # فحص الكلمات المحظورة
+        if check_forbidden_words(text):
+            return await message.reply_text("لا يمكن تنزيل هذا❌")  
+        
+        h = await message.reply_text("جاري التحميل...")
+        audio_file = None
+        sedlyf = None
+        
+        # محاولة التحميل مع تدوير الكوكيز
+        max_retries = len(cookie_manager.cookies_files) if cookie_manager.cookies_files else 1
+        
+        for attempt in range(max_retries):
+            try:
+                # الحصول على ملف الكوكيز
+                cookie_file = cookie_manager.get_next_cookie()
+                if not cookie_file:
                     await h.delete()
-                except Exception as del_error:
-                    print(f"خطأ في حذف رسالة التحميل: {del_error}")
+                    return await message.reply_text("لا توجد ملفات كوكيز متاحة")
                 
-                return await message.reply_text("حدث خطأ أثناء التحميل، حاول مرة أخرى")
-            
-            # انتظار قليل قبل المحاولة التالية
-            await asyncio.sleep(1)
+                # البحث في YouTube
+                search = SearchVideos(text, offset=1, mode="dict", max_results=1)
+                mi = search.result()
+                
+                if not mi or not mi.get("search_result") or len(mi["search_result"]) == 0:
+                    await h.delete()
+                    return await message.reply_text("لم يتم العثور على نتائج للبحث المطلوب")
+                
+                mio = mi["search_result"]
+                mo = mio[0]["link"]
+                thum = mio[0]["title"]
+                fridayz = mio[0]["id"]
+                
+                # تحميل الصورة المصغرة
+                kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
+                sedlyf = wget.download(kekme, bar=None)
+                
+                # إعدادات التحميل مع الكوكيز الحالي
+                opts = {
+                    'format': 'bestaudio[ext=m4a]', 
+                    'outtmpl': '%(title)s.%(ext)s', 
+                    "cookiefile": cookie_file
+                }
+                
+                with YoutubeDL(opts) as ytdl:
+                    ytdl_data = ytdl.extract_info(mo, download=True)
+                    audio_file = ytdl.prepare_filename(ytdl_data)
+                
+                # إعداد الرسالة
+                capy = f"[{thum}]({mo})"
+                duration = int(ytdl_data.get("duration", 0))
+                title = str(ytdl_data.get("title", "Unknown"))
+                performer = str(ytdl_data.get("uploader", "Unknown"))
+                
+                await h.delete()  # حذف رسالة "جاري التحميل..."
+                
+                # إرسال الملف الصوتي
+                await client.send_audio(
+                    message.chat.id, 
+                    audio=audio_file, 
+                    duration=duration, 
+                    title=title, 
+                    performer=performer, 
+                    file_name=title, 
+                    thumb=sedlyf,
+                    caption=capy
+                )
+                
+                # تنظيف الملفات المؤقتة
+                clean_temp_files(audio_file, sedlyf)
+                
+                print(f"✅ تم إرسال الملف بنجاح: {title}")
+                return  # نجح التحميل، خروج من الدالة بالكامل
+                
+            except Exception as e:
+                print(f"محاولة {attempt + 1} فشلت مع ملف الكوكيز {os.path.basename(cookie_file) if cookie_file else 'غير محدد'}: {e}")
+                
+                # تنظيف الملفات في حالة الخطأ
+                clean_temp_files(audio_file, sedlyf)
+                
+                # إذا كانت هذه المحاولة الأخيرة
+                if attempt == max_retries - 1:
+                    try:
+                        await h.delete()
+                    except Exception as del_error:
+                        print(f"خطأ في حذف رسالة التحميل: {del_error}")
+                    
+                    return await message.reply_text("حدث خطأ أثناء التحميل، حاول مرة أخرى")
+                
+                # انتظار قليل قبل المحاولة التالية
+                await asyncio.sleep(1)
+                
+    finally:
+        # تأكد من إزالة الطلب من قائمة النشطة في جميع الحالات
+        if request_key in active_requests:
+            del active_requests[request_key]
+            print(f"تم إنهاء معالجة الطلب: {text}")
 
 # الأوامر مع /
 @Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)

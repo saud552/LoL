@@ -16,43 +16,12 @@
 PyTgCalls v2.2.5 powered by NTgCalls v2.0.5, Copyright (C) 2021-2025 Laky-64 <https://github.com/Laky-64>
 Licensed under the terms of the GNU Lesser General Public License v3 or later (LGPLv3+)
 
+بدء معالجة طلب جديد: بحبك
 استخدام ملف الكوكيز: cookies10.txt
 [youtube] yOVVbM9YtWM: Downloading webpage
 [youtube] yOVVbM9YtWM: Downloading tv client config
 [youtube] yOVVbM9YtWM: Downloading tv player API JSON
 [info] yOVVbM9YtWM: Downloading 1 format(s): 140
 [download] Destination: جنات - بحبك ⧸  Jannat - Bahbak.m4a
-[download]   0.0% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.8% of    3.83MiB at   14.43MiB/s ETA 00:00  [download]   1.6% of    3.83MiB at   13.82MiB/s ETA 00:00[download]   3.2% of    3.83MiB at   21.30MiB/s ETA 00:00[download]   6.5% of    3.83MiB at   31.19MiB/s ETA 00:00[download]  13.0% of    3.83MiB at   46.43MiB/s ETA 00:00[download]  26.1% of    3.83MiB at   73.54MiB/s ETA 00:00[download]  52.2% of    3.83MiB at  123.27MiB/s ETA 00:00[download] 100.0% of    3.83MiB at  107.75MiB/s ETA 00:00[download] 100% of    3.83MiB in 00:00:00 at 19.24MiB/s  
-WARNING: yOVVbM9YtWM: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
-[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
-استخدام ملف الكوكيز: cookies3.txt
-[youtube] yOVVbM9YtWM: Downloading webpage
-[youtube] yOVVbM9YtWM: Downloading tv client config
-[youtube] yOVVbM9YtWM: Downloading tv player API JSON
-[youtube] yOVVbM9YtWM: Downloading ios player API JSON
-ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
-[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
-محاولة 1 فشلت مع ملف الكوكيز cookies3.txt: ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
-استخدام ملف الكوكيز: cookies1.txt
-[youtube] yOVVbM9YtWM: Downloading webpage
-[youtube] yOVVbM9YtWM: Downloading tv client config
-[youtube] yOVVbM9YtWM: Downloading tv player API JSON
-[youtube] yOVVbM9YtWM: Downloading ios player API JSON
-ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
-[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
-محاولة 2 فشلت مع ملف الكوكيز cookies1.txt: ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
-استخدام ملف الكوكيز: cookies9.txt
-[youtube] yOVVbM9YtWM: Downloading webpage
-[youtube] yOVVbM9YtWM: Downloading tv client config
-[youtube] yOVVbM9YtWM: Downloading tv player API JSON
-ERROR: [youtube] yOVVbM9YtWM: Video unavailable. This content isn’t available.
-[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
-محاولة 3 فشلت مع ملف الكوكيز cookies9.txt: ERROR: [youtube] yOVVbM9YtWM: Video unavailable. This content isn’t available.
-استخدام ملف الكوكيز: cookies7.txt
-[youtube] yOVVbM9YtWM: Downloading webpage
-[youtube] yOVVbM9YtWM: Downloading tv client config
-[youtube] yOVVbM9YtWM: Downloading tv player API JSON
-[info] yOVVbM9YtWM: Downloading 1 format(s): 140
-[download] Destination: جنات - بحبك ⧸  Jannat - Bahbak.m4a
-[download]   0.0% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.8% of    3.83MiB at   28.83MiB/s ETA 00:00  [download]   1.6% of    3.83MiB at   26.30MiB/s ETA 00:00[download]   3.2% of    3.83MiB at   40.61MiB/s ETA 00:00[download]   6.5% of    3.83MiB at   54.78MiB/s ETA 00:00[download]  13.0% of    3.83MiB at   77.75MiB/s ETA 00:00[download]  26.1% of    3.83MiB at  117.53MiB/s ETA 00:00[download]  52.2% of    3.83MiB at  169.62MiB/s ETA 00:00[download] 100.0% of    3.83MiB at  230.79MiB/s ETA 00:00[download] 100% of    3.83MiB in 00:00:00 at 19.51MiB/s  
+[download]   0.0% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.8% of    3.83MiB at   20.54MiB/s ETA 00:00  [download]   1.6% of    3.83MiB at   18.55MiB/s ETA 00:00[download]   3.2% of    3.83MiB at   24.00MiB/s ETA 00:00[download]   6.5% of    3.83MiB at   36.36MiB/s ETA 00:00[download]  13.0% of    3.83MiB at   51.32MiB/s ETA 00:00[download]  26.1% of    3.83MiB at   85.66MiB/s ETA 00:00[download]  52.2% of    3.83MiB at  137.03MiB/s ETA 00:00[download] 100.0% of    3.83MiB at   51.55MiB/s ETA 00:00[download] 100% of    3.83MiB in 00:00:00 at 21.09MiB/s  
 WARNING: yOVVbM9YtWM: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
