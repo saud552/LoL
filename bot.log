@@ -1,8 +1,597 @@
 /workspace/CASERr/CASERr.py:800: SyntaxWarning: invalid escape sequence '\P'
   await CallbackQuery.edit_message_text(f"A Telegram Music Bot\nPlayed Music and Video in VC\nBot Online Now ......🖱️❤️\nAdd Me To Your Chat\Powered By [{namew}]", reply_markup=InlineKeyboardMarkup(button))
-�لكوكيز المتاحة: 13
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+تم تشغيل الصانع بنجاح..💗
+🔄 جاري تحميل بوت صانع البوتات الموسيقية...
+🔄 جاري تحميل نظام CASERr...
+تم العثور على 13 ملف كوكيز
+✅ تم تحميل النظام البسيط والفعال!
+📊 ملفات الكوكيز المتاحة: 13
 ✅ تم تحميل نظام التشغيل الذكي المحسن بنجاح!
 ✅ تم تحميل نظام CASERr بنجاح!
 ✅ تم تحميل بوت صانع البوتات الموسيقية بنجاح!
 🔄 جاري تحميل بوت صانع البوتات الموسيقية...
 ✅ تم تحميل بوت صانع البوتات الموسيقية بنجاح!
+🔄 جاري تحميل نظام CASERr...
+✅ تم تحميل نظام CASERr بنجاح!
+⚠️ كائنات البوت غير موجودة: FT5IBOT
+PyTgCalls v2.2.5 powered by NTgCalls v2.0.5, Copyright (C) 2021-2025 Laky-64 <https://github.com/Laky-64>
+Licensed under the terms of the GNU Lesser General Public License v3 or later (LGPLv3+)
+
+🔄 بدء معالجة طلب جديد: احبك (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 1
+استخدام ملف الكوكيز: cookies10.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[info] 6Q8e8tmKWMI: Downloading 1 format(s): 140
+[download] حسين الجسمي - أحبّك (حصرياً) ｜ 2018.m4a has already been downloaded
+[download] 100% of    4.67MiB
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+✅ تم إرسال الملف بنجاح: حسين الجسمي - أحبّك (حصرياً) | 2018
+🚫 إيقاف جميع المحاولات الأخرى للطلب: احبك
+تم إنهاء معالجة الطلب: احبك
+🔄 بدء معالجة طلب جديد: وينك حبيبي (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 1
+استخدام ملف الكوكيز: cookies3.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+Task exception was never retrieved
+future: <Task finished name='Task-658' coro=<Client.handle_updates() done, defined at /home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py:535> exception=ValueError('Peer id invalid: -1002727115068')>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 62, in resolve_peer
+    return await self.storage.get_peer_by_id(peer_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/storage/sqlite_storage.py", line 142, in get_peer_by_id
+    raise KeyError(f"ID not found: {peer_id}")
+KeyError: 'ID not found: -1002727115068'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py", line 569, in handle_updates
+    channel=await self.resolve_peer(utils.get_channel_id(channel_id)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 89, in resolve_peer
+    peer_type = utils.get_peer_type(peer_id)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/utils.py", line 246, in get_peer_type
+    raise ValueError(f"Peer id invalid: {peer_id}")
+ValueError: Peer id invalid: -1002727115068
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 1 فشلت مع ملف الكوكيز cookies3.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies1.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 2 فشلت مع ملف الكوكيز cookies1.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies9.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Video unavailable. This content isn’t available.
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 3 فشلت مع ملف الكوكيز cookies9.txt: ERROR: [youtube] 20vve5Uoxw8: Video unavailable. This content isn’t available.
+استخدام ملف الكوكيز: cookies7.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[info] 20vve5Uoxw8: Downloading 1 format(s): 140
+[download] Destination: Assi El Hallani ... Waynak Habibi - VC ｜ عاصي الحلاني ... وينك حبيبي - فيديو كليب.m4a
+[download]   0.0% of    5.50MiB at  660.21KiB/s ETA 00:08[download]   0.1% of    5.50MiB at    1.59MiB/s ETA 00:03[download]   0.1% of    5.50MiB at    3.35MiB/s ETA 00:01[download]   0.3% of    5.50MiB at    6.60MiB/s ETA 00:00[download]   0.6% of    5.50MiB at    3.94MiB/s ETA 00:01[download]   1.1% of    5.50MiB at    4.59MiB/s ETA 00:01[download]   2.3% of    5.50MiB at    6.14MiB/s ETA 00:00[download]   4.5% of    5.50MiB at    9.13MiB/s ETA 00:00[download]   9.1% of    5.50MiB at   14.44MiB/s ETA 00:00[download]  18.2% of    5.50MiB at   23.71MiB/s ETA 00:00[download]  36.4% of    5.50MiB at   40.25MiB/s ETA 00:00[download]  72.8% of    5.50MiB at   47.01MiB/s ETA 00:00[download] 100.0% of    5.50MiB at   43.40MiB/s ETA 00:00[download] 100% of    5.50MiB in 00:00:00 at 26.14MiB/s  
+WARNING: 20vve5Uoxw8: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+Task exception was never retrieved
+future: <Task finished name='Task-704' coro=<Client.handle_updates() done, defined at /home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py:535> exception=ValueError('Peer id invalid: -1002727115068')>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 62, in resolve_peer
+    return await self.storage.get_peer_by_id(peer_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/storage/sqlite_storage.py", line 142, in get_peer_by_id
+    raise KeyError(f"ID not found: {peer_id}")
+KeyError: 'ID not found: -1002727115068'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py", line 569, in handle_updates
+    channel=await self.resolve_peer(utils.get_channel_id(channel_id)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 89, in resolve_peer
+    peer_type = utils.get_peer_type(peer_id)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/utils.py", line 246, in get_peer_type
+    raise ValueError(f"Peer id invalid: {peer_id}")
+ValueError: Peer id invalid: -1002727115068
+Task exception was never retrieved
+future: <Task finished name='Task-715' coro=<Client.handle_updates() done, defined at /home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py:535> exception=ValueError('Peer id invalid: -1002727115068')>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 62, in resolve_peer
+    return await self.storage.get_peer_by_id(peer_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/storage/sqlite_storage.py", line 142, in get_peer_by_id
+    raise KeyError(f"ID not found: {peer_id}")
+KeyError: 'ID not found: -1002727115068'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py", line 569, in handle_updates
+    channel=await self.resolve_peer(utils.get_channel_id(channel_id)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 89, in resolve_peer
+    peer_type = utils.get_peer_type(peer_id)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/utils.py", line 246, in get_peer_type
+    raise ValueError(f"Peer id invalid: {peer_id}")
+ValueError: Peer id invalid: -1002727115068
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+✅ تم إرسال الملف بنجاح: Assi El Hallani ... Waynak Habibi - VC | عاصي الحلاني ... وينك حبيبي - فيديو كليب
+🚫 إيقاف جميع المحاولات الأخرى للطلب: وينك حبيبي
+تم إنهاء معالجة الطلب: وينك حبيبي
+🔄 بدء معالجة طلب جديد: احبك (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 1
+🔄 بدء معالجة طلب جديد: وينك حبيبي (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 2
+🔄 بدء معالجة طلب جديد: عليكي عيون (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 3
+🔄 بدء معالجة طلب جديد: حسين الجسمي بحبك (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 4
+🔄 بدء معالجة طلب جديد: حسين الجسمي (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 5
+استخدام ملف الكوكيز: cookies13.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[youtube] 6Q8e8tmKWMI: Downloading ios player API JSON
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 1 فشلت مع ملف الكوكيز cookies13.txt: ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies2.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 1 فشلت مع ملف الكوكيز cookies2.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies6.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[youtube] cTXLxXj88kw: Downloading ios player API JSON
+ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=zUYdZvWRwnQ
+محاولة 1 فشلت مع ملف الكوكيز cookies6.txt: ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies5.txt
+[youtube] zUYdZvWRwnQ: Downloading webpage
+[youtube] zUYdZvWRwnQ: Downloading tv client config
+[youtube] zUYdZvWRwnQ: Downloading tv player API JSON
+[youtube] zUYdZvWRwnQ: Downloading ios player API JSON
+ERROR: [youtube] zUYdZvWRwnQ: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 1 فشلت مع ملف الكوكيز cookies5.txt: ERROR: [youtube] zUYdZvWRwnQ: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies8.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+محاولة 1 فشلت مع ملف الكوكيز cookies8.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies11.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[info] 6Q8e8tmKWMI: Downloading 1 format(s): 140
+[download] Destination: حسين الجسمي - أحبّك (حصرياً) ｜ 2018.m4a
+[download]   0.0% of    4.67MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.67MiB at    2.38MiB/s ETA 00:01  [download]   0.1% of    4.67MiB at    4.83MiB/s ETA 00:00[download]   0.3% of    4.67MiB at    9.24MiB/s ETA 00:00[download]   0.6% of    4.67MiB at    4.19MiB/s ETA 00:01[download]   1.3% of    4.67MiB at    4.26MiB/s ETA 00:01[download]   2.7% of    4.67MiB at    5.78MiB/s ETA 00:00[download]   5.3% of    4.67MiB at    8.60MiB/s ETA 00:00[download]  10.7% of    4.67MiB at   13.45MiB/s ETA 00:00[download]  21.4% of    4.67MiB at   22.38MiB/s ETA 00:00[download]  42.9% of    4.67MiB at   37.57MiB/s ETA 00:00[download]  85.7% of    4.67MiB at   55.14MiB/s ETA 00:00[download] 100.0% of    4.67MiB at   63.25MiB/s ETA 00:00[download] 100% of    4.67MiB in 00:00:00 at 37.11MiB/s  
+WARNING: 6Q8e8tmKWMI: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+استخدام ملف الكوكيز: cookies4.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 2 فشلت مع ملف الكوكيز cookies4.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies12.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[youtube] cTXLxXj88kw: Downloading ios player API JSON
+ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=zUYdZvWRwnQ
+محاولة 2 فشلت مع ملف الكوكيز cookies12.txt: ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies10.txt
+[youtube] zUYdZvWRwnQ: Downloading webpage
+[youtube] zUYdZvWRwnQ: Downloading tv client config
+[youtube] zUYdZvWRwnQ: Downloading tv player API JSON
+[info] zUYdZvWRwnQ: Downloading 1 format(s): 140
+[download] Destination: Husain Al Jassmi ... Bahebik Wahchtini ｜ حسين الجسمي ... بحبك وحشتيني.m4a
+[download]   0.0% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.9% of    3.45MiB at   18.49MiB/s ETA 00:00  [download]   1.8% of    3.45MiB at   17.20MiB/s ETA 00:00[download]   3.6% of    3.45MiB at   25.81MiB/s ETA 00:00[download]   7.2% of    3.45MiB at   37.00MiB/s ETA 00:00[download]  14.5% of    3.45MiB at   53.66MiB/s ETA 00:00[download]  29.0% of    3.45MiB at   83.05MiB/s ETA 00:00[download]  58.0% of    3.45MiB at  127.80MiB/s ETA 00:00[download] 100.0% of    3.45MiB at   61.80MiB/s ETA 00:00[download] 100% of    3.45MiB in 00:00:00 at 21.83MiB/s  
+WARNING: zUYdZvWRwnQ: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=x3OZ8_gEDjU
+استخدام ملف الكوكيز: cookies3.txt
+[youtube] x3OZ8_gEDjU: Downloading webpage
+[youtube] x3OZ8_gEDjU: Downloading tv client config
+[youtube] x3OZ8_gEDjU: Downloading tv player API JSON
+[youtube] x3OZ8_gEDjU: Downloading ios player API JSON
+ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 2 فشلت مع ملف الكوكيز cookies3.txt: ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies1.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 3 فشلت مع ملف الكوكيز cookies1.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies9.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+ERROR: [youtube] cTXLxXj88kw: Video unavailable. This content isn’t available.
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 3 فشلت مع ملف الكوكيز cookies9.txt: ERROR: [youtube] cTXLxXj88kw: Video unavailable. This content isn’t available.
+استخدام ملف الكوكيز: cookies7.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[info] MywOWtNVtFs: Downloading 1 format(s): 140
+[download] Destination: Hussain Al Jassmi - Al Haneen ｜ Album HJ2025 ｜ حسين الجسمي - الحنين.m4a
+[download]   0.0% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.2% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.3% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.7% of    4.40MiB at   19.03MiB/s ETA 00:00  [download]   1.4% of    4.40MiB at   20.07MiB/s ETA 00:00[download]   2.8% of    4.40MiB at   27.77MiB/s ETA 00:00[download]   5.7% of    4.40MiB at   40.36MiB/s ETA 00:00[download]  11.3% of    4.40MiB at   48.28MiB/s ETA 00:00[download]  22.7% of    4.40MiB at   78.47MiB/s ETA 00:00[download]  45.4% of    4.40MiB at  120.24MiB/s ETA 00:00[download]  90.9% of    4.40MiB at   55.96MiB/s ETA 00:00[download] 100.0% of    4.40MiB at   23.92MiB/s ETA 00:00[download] 100% of    4.40MiB in 00:00:00 at 10.20MiB/s  
+WARNING: MywOWtNVtFs: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+استخدام ملف الكوكيز: cookies13.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 4 فشلت مع ملف الكوكيز cookies13.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies2.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[youtube] cTXLxXj88kw: Downloading ios player API JSON
+ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 4 فشلت مع ملف الكوكيز cookies2.txt: ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies6.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 5 فشلت مع ملف الكوكيز cookies6.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies5.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[youtube] cTXLxXj88kw: Downloading ios player API JSON
+ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 5 فشلت مع ملف الكوكيز cookies5.txt: ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies8.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 6 فشلت مع ملف الكوكيز cookies8.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies11.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[info] cTXLxXj88kw: Downloading 1 format(s): 140
+[download] Destination: Ahmed Saad - Aleky Eyoun ( Full Version - 2022 ) احمد سعد - عليكي عيون.m4a
+[download]   0.0% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.5% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.9% of    3.24MiB at   16.33MiB/s ETA 00:00  [download]   1.9% of    3.24MiB at   15.73MiB/s ETA 00:00[download]   3.8% of    3.24MiB at   20.88MiB/s ETA 00:00[download]   7.7% of    3.24MiB at   31.78MiB/s ETA 00:00[download]  15.4% of    3.24MiB at   49.99MiB/s ETA 00:00[download]  30.8% of    3.24MiB at   80.54MiB/s ETA 00:00[download]  61.7% of    3.24MiB at  126.39MiB/s ETA 00:00[download] 100.0% of    3.24MiB at  170.85MiB/s ETA 00:00[download] 100% of    3.24MiB in 00:00:00 at 45.36MiB/s  
+WARNING: cTXLxXj88kw: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+استخدام ملف الكوكيز: cookies4.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+Task exception was never retrieved
+future: <Task finished name='Task-742' coro=<Client.handle_updates() done, defined at /home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py:535> exception=ValueError('Peer id invalid: -1002727115068')>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 62, in resolve_peer
+    return await self.storage.get_peer_by_id(peer_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/storage/sqlite_storage.py", line 142, in get_peer_by_id
+    raise KeyError(f"ID not found: {peer_id}")
+KeyError: 'ID not found: -1002727115068'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/client.py", line 569, in handle_updates
+    channel=await self.resolve_peer(utils.get_channel_id(channel_id)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 89, in resolve_peer
+    peer_type = utils.get_peer_type(peer_id)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/utils.py", line 246, in get_peer_type
+    raise ValueError(f"Peer id invalid: {peer_id}")
+ValueError: Peer id invalid: -1002727115068
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 7 فشلت مع ملف الكوكيز cookies4.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies12.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 8 فشلت مع ملف الكوكيز cookies12.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies10.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[info] 20vve5Uoxw8: Downloading 1 format(s): 140
+[download] Destination: Assi El Hallani ... Waynak Habibi - VC ｜ عاصي الحلاني ... وينك حبيبي - فيديو كليب.m4a
+[download]   0.0% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.1% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.1% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.3% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.6% of    5.50MiB at   17.29MiB/s ETA 00:00  [download]   1.1% of    5.50MiB at   18.71MiB/s ETA 00:00[download]   2.3% of    5.50MiB at   23.91MiB/s ETA 00:00[download]   4.5% of    5.50MiB at   38.62MiB/s ETA 00:00[download]   9.1% of    5.50MiB at   62.04MiB/s ETA 00:00[download]  18.2% of    5.50MiB at   91.17MiB/s ETA 00:00[download]  36.4% of    5.50MiB at  143.79MiB/s ETA 00:00[download]  72.8% of    5.50MiB at  226.49MiB/s ETA 00:00[download] 100.0% of    5.50MiB at  128.65MiB/s ETA 00:00[download] 100% of    5.50MiB in 00:00:00 at 71.63MiB/s  
+WARNING: 20vve5Uoxw8: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+✅ تم إرسال الملف بنجاح: Hussain Al Jassmi - Al Haneen | Album HJ2025 | حسين الجسمي - الحنين
+🚫 إيقاف جميع المحاولات الأخرى للطلب: حسين الجسمي
+تم إنهاء معالجة الطلب: حسين الجسمي
+✅ تم إرسال الملف بنجاح: Ahmed Saad - Aleky Eyoun ( Full Version - 2022 ) احمد سعد - عليكي عيون
+🚫 إيقاف جميع المحاولات الأخرى للطلب: عليكي عيون
+تم إنهاء معالجة الطلب: عليكي عيون
+✅ تم إرسال الملف بنجاح: حسين الجسمي - أحبّك (حصرياً) | 2018
+🚫 إيقاف جميع المحاولات الأخرى للطلب: احبك
+تم إنهاء معالجة الطلب: احبك
+✅ تم إرسال الملف بنجاح: Husain Al Jassmi ... Bahebik Wahchtini | حسين الجسمي ... بحبك وحشتيني
+🚫 إيقاف جميع المحاولات الأخرى للطلب: حسين الجسمي بحبك
+تم إنهاء معالجة الطلب: حسين الجسمي بحبك
+✅ تم إرسال الملف بنجاح: Assi El Hallani ... Waynak Habibi - VC | عاصي الحلاني ... وينك حبيبي - فيديو كليب
+🚫 إيقاف جميع المحاولات الأخرى للطلب: وينك حبيبي
+تم إنهاء معالجة الطلب: وينك حبيبي
+🔄 بدء معالجة طلب جديد: احبك (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 1
+🔄 بدء معالجة طلب جديد: وينك حبيبي (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 2
+🔄 بدء معالجة طلب جديد: عليكي عيون (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 3
+🔄 بدء معالجة طلب جديد: حسين الجسمي بحبك (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 4
+🔄 بدء معالجة طلب جديد: حسين الجسمي (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 5
+استخدام ملف الكوكيز: cookies3.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[youtube] 6Q8e8tmKWMI: Downloading ios player API JSON
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 1 فشلت مع ملف الكوكيز cookies3.txt: ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies1.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 1 فشلت مع ملف الكوكيز cookies1.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies9.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Video unavailable. This content isn’t available.
+[youtube] Extracting URL: https://www.youtube.com/watch?v=zUYdZvWRwnQ
+محاولة 1 فشلت مع ملف الكوكيز cookies9.txt: ERROR: [youtube] 20vve5Uoxw8: Video unavailable. This content isn’t available.
+استخدام ملف الكوكيز: cookies7.txt
+[youtube] zUYdZvWRwnQ: Downloading webpage
+[youtube] zUYdZvWRwnQ: Downloading tv client config
+[youtube] zUYdZvWRwnQ: Downloading tv player API JSON
+[info] zUYdZvWRwnQ: Downloading 1 format(s): 140
+[download] Destination: Husain Al Jassmi ... Bahebik Wahchtini ｜ حسين الجسمي ... بحبك وحشتيني.m4a
+[download]   0.0% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.45MiB at  Unknown B/s ETA Unknown[download]   0.9% of    3.45MiB at   16.07MiB/s ETA 00:00  [download]   1.8% of    3.45MiB at   15.20MiB/s ETA 00:00[download]   3.6% of    3.45MiB at   18.34MiB/s ETA 00:00[download]   7.2% of    3.45MiB at   32.14MiB/s ETA 00:00[download]  14.5% of    3.45MiB at   48.15MiB/s ETA 00:00[download]  29.0% of    3.45MiB at   79.29MiB/s ETA 00:00[download]  58.0% of    3.45MiB at  125.32MiB/s ETA 00:00[download] 100.0% of    3.45MiB at   52.94MiB/s ETA 00:00[download] 100% of    3.45MiB in 00:00:00 at 18.21MiB/s  
+WARNING: zUYdZvWRwnQ: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+استخدام ملف الكوكيز: cookies13.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[youtube] cTXLxXj88kw: Downloading ios player API JSON
+ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+محاولة 1 فشلت مع ملف الكوكيز cookies13.txt: ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies2.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[youtube] 6Q8e8tmKWMI: Downloading ios player API JSON
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=x3OZ8_gEDjU
+محاولة 2 فشلت مع ملف الكوكيز cookies2.txt: ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies6.txt
+[youtube] x3OZ8_gEDjU: Downloading webpage
+[youtube] x3OZ8_gEDjU: Downloading tv client config
+[youtube] x3OZ8_gEDjU: Downloading tv player API JSON
+[youtube] x3OZ8_gEDjU: Downloading ios player API JSON
+ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 2 فشلت مع ملف الكوكيز cookies6.txt: ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies5.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 2 فشلت مع ملف الكوكيز cookies5.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies8.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[youtube] cTXLxXj88kw: Downloading ios player API JSON
+ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+محاولة 2 فشلت مع ملف الكوكيز cookies8.txt: ERROR: [youtube] cTXLxXj88kw: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies11.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[info] 6Q8e8tmKWMI: Downloading 1 format(s): 140
+[download] Destination: حسين الجسمي - أحبّك (حصرياً) ｜ 2018.m4a
+[download]   0.0% of    4.67MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.67MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.67MiB at    6.37MiB/s ETA 00:00  [download]   0.3% of    4.67MiB at   11.43MiB/s ETA 00:00[download]   0.6% of    4.67MiB at    3.53MiB/s ETA 00:01[download]   1.3% of    4.67MiB at    3.73MiB/s ETA 00:01[download]   2.7% of    4.67MiB at    5.13MiB/s ETA 00:00[download]   5.3% of    4.67MiB at    7.65MiB/s ETA 00:00[download]  10.7% of    4.67MiB at   12.18MiB/s ETA 00:00[download]  21.4% of    4.67MiB at   20.40MiB/s ETA 00:00[download]  42.9% of    4.67MiB at   34.78MiB/s ETA 00:00[download]  85.7% of    4.67MiB at   59.46MiB/s ETA 00:00[download] 100.0% of    4.67MiB at   68.32MiB/s ETA 00:00[download] 100% of    4.67MiB in 00:00:00 at 29.05MiB/s  
+WARNING: 6Q8e8tmKWMI: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+استخدام ملف الكوكيز: cookies4.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 3 فشلت مع ملف الكوكيز cookies4.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies12.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cTXLxXj88kw
+محاولة 3 فشلت مع ملف الكوكيز cookies12.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies10.txt
+[youtube] cTXLxXj88kw: Downloading webpage
+[youtube] cTXLxXj88kw: Downloading tv client config
+[youtube] cTXLxXj88kw: Downloading tv player API JSON
+[info] cTXLxXj88kw: Downloading 1 format(s): 140
+[download] Destination: Ahmed Saad - Aleky Eyoun ( Full Version - 2022 ) احمد سعد - عليكي عيون.m4a
+[download]   0.0% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.5% of    3.24MiB at  Unknown B/s ETA Unknown[download]   0.9% of    3.24MiB at   18.13MiB/s ETA 00:00  [download]   1.9% of    3.24MiB at   17.23MiB/s ETA 00:00[download]   3.8% of    3.24MiB at   24.47MiB/s ETA 00:00[download]   7.7% of    3.24MiB at   36.96MiB/s ETA 00:00[download]  15.4% of    3.24MiB at   53.90MiB/s ETA 00:00[download]  30.8% of    3.24MiB at   82.98MiB/s ETA 00:00[download]  61.7% of    3.24MiB at  122.32MiB/s ETA 00:00[download] 100.0% of    3.24MiB at  172.36MiB/s ETA 00:00[download] 100% of    3.24MiB in 00:00:00 at 64.27MiB/s  
+WARNING: cTXLxXj88kw: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=x3OZ8_gEDjU
+استخدام ملف الكوكيز: cookies3.txt
+[youtube] x3OZ8_gEDjU: Downloading webpage
+[youtube] x3OZ8_gEDjU: Downloading tv client config
+[youtube] x3OZ8_gEDjU: Downloading tv player API JSON
+[youtube] x3OZ8_gEDjU: Downloading ios player API JSON
+ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 4 فشلت مع ملف الكوكيز cookies3.txt: ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies1.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[youtube] 20vve5Uoxw8: Downloading ios player API JSON
+ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 4 فشلت مع ملف الكوكيز cookies1.txt: ERROR: [youtube] 20vve5Uoxw8: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies9.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+ERROR: [youtube] MywOWtNVtFs: Video unavailable. This content isn’t available.
+[youtube] Extracting URL: https://www.youtube.com/watch?v=20vve5Uoxw8
+محاولة 5 فشلت مع ملف الكوكيز cookies9.txt: ERROR: [youtube] MywOWtNVtFs: Video unavailable. This content isn’t available.
+استخدام ملف الكوكيز: cookies7.txt
+[youtube] 20vve5Uoxw8: Downloading webpage
+[youtube] 20vve5Uoxw8: Downloading tv client config
+[youtube] 20vve5Uoxw8: Downloading tv player API JSON
+[info] 20vve5Uoxw8: Downloading 1 format(s): 140
+[download] Destination: Assi El Hallani ... Waynak Habibi - VC ｜ عاصي الحلاني ... وينك حبيبي - فيديو كليب.m4a
+[download]   0.0% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.1% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.1% of    5.50MiB at  Unknown B/s ETA Unknown[download]   0.3% of    5.50MiB at   13.00MiB/s ETA 00:00  [download]   0.6% of    5.50MiB at    3.71MiB/s ETA 00:01[download]   1.1% of    5.50MiB at    3.86MiB/s ETA 00:01[download]   2.3% of    5.50MiB at    5.21MiB/s ETA 00:01[download]   4.5% of    5.50MiB at    7.93MiB/s ETA 00:00[download]   9.1% of    5.50MiB at   12.27MiB/s ETA 00:00[download]  18.2% of    5.50MiB at   20.58MiB/s ETA 00:00[download]  36.4% of    5.50MiB at   34.73MiB/s ETA 00:00[download]  72.8% of    5.50MiB at   34.43MiB/s ETA 00:00[download] 100.0% of    5.50MiB at   35.41MiB/s ETA 00:00[download] 100% of    5.50MiB in 00:00:00 at 24.13MiB/s  
+WARNING: 20vve5Uoxw8: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+استخدام ملف الكوكيز: cookies13.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 6 فشلت مع ملف الكوكيز cookies13.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies2.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 7 فشلت مع ملف الكوكيز cookies2.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies6.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 8 فشلت مع ملف الكوكيز cookies6.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies5.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[youtube] MywOWtNVtFs: Downloading ios player API JSON
+ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=x3OZ8_gEDjU
+محاولة 9 فشلت مع ملف الكوكيز cookies5.txt: ERROR: [youtube] MywOWtNVtFs: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies8.txt
+[youtube] x3OZ8_gEDjU: Downloading webpage
+[youtube] x3OZ8_gEDjU: Downloading tv client config
+[youtube] x3OZ8_gEDjU: Downloading tv player API JSON
+[youtube] x3OZ8_gEDjU: Downloading ios player API JSON
+ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MywOWtNVtFs
+محاولة 10 فشلت مع ملف الكوكيز cookies8.txt: ERROR: [youtube] x3OZ8_gEDjU: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies11.txt
+[youtube] MywOWtNVtFs: Downloading webpage
+[youtube] MywOWtNVtFs: Downloading tv client config
+[youtube] MywOWtNVtFs: Downloading tv player API JSON
+[info] MywOWtNVtFs: Downloading 1 format(s): 140
+[download] Destination: Hussain Al Jassmi - Al Haneen ｜ Album HJ2025 ｜ حسين الجسمي - الحنين.m4a
+[download]   0.0% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.2% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.3% of    4.40MiB at  Unknown B/s ETA Unknown[download]   0.7% of    4.40MiB at   16.62MiB/s ETA 00:00  [download]   1.4% of    4.40MiB at   16.14MiB/s ETA 00:00[download]   2.8% of    4.40MiB at   21.35MiB/s ETA 00:00[download]   5.7% of    4.40MiB at   30.45MiB/s ETA 00:00[download]  11.3% of    4.40MiB at   48.32MiB/s ETA 00:00[download]  22.7% of    4.40MiB at   78.76MiB/s ETA 00:00[download]  45.4% of    4.40MiB at  119.35MiB/s ETA 00:00[download]  90.9% of    4.40MiB at   71.62MiB/s ETA 00:00[download] 100.0% of    4.40MiB at   72.63MiB/s ETA 00:00[download] 100% of    4.40MiB in 00:00:00 at 30.16MiB/s  
+WARNING: MywOWtNVtFs: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+✅ تم إرسال الملف بنجاح: حسين الجسمي - أحبّك (حصرياً) | 2018
+🚫 إيقاف جميع المحاولات الأخرى للطلب: احبك
+تم إنهاء معالجة الطلب: احبك
+✅ تم إرسال الملف بنجاح: Ahmed Saad - Aleky Eyoun ( Full Version - 2022 ) احمد سعد - عليكي عيون
+🚫 إيقاف جميع المحاولات الأخرى للطلب: عليكي عيون
+تم إنهاء معالجة الطلب: عليكي عيون
+✅ تم إرسال الملف بنجاح: Assi El Hallani ... Waynak Habibi - VC | عاصي الحلاني ... وينك حبيبي - فيديو كليب
+🚫 إيقاف جميع المحاولات الأخرى للطلب: وينك حبيبي
+تم إنهاء معالجة الطلب: وينك حبيبي
+✅ تم إرسال الملف بنجاح: Husain Al Jassmi ... Bahebik Wahchtini | حسين الجسمي ... بحبك وحشتيني
+🚫 إيقاف جميع المحاولات الأخرى للطلب: حسين الجسمي بحبك
+تم إنهاء معالجة الطلب: حسين الجسمي بحبك
+✅ تم إرسال الملف بنجاح: Hussain Al Jassmi - Al Haneen | Album HJ2025 | حسين الجسمي - الحنين
+🚫 إيقاف جميع المحاولات الأخرى للطلب: حسين الجسمي
+تم إنهاء معالجة الطلب: حسين الجسمي
+🔄 بدء معالجة طلب جديد: احبك (من المستخدم: 985612253)
+📝 الطلبات النشطة حالياً: 1
+استخدام ملف الكوكيز: cookies4.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[youtube] 6Q8e8tmKWMI: Downloading ios player API JSON
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+محاولة 1 فشلت مع ملف الكوكيز cookies4.txt: ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies12.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[youtube] 6Q8e8tmKWMI: Downloading ios player API JSON
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6Q8e8tmKWMI
+محاولة 2 فشلت مع ملف الكوكيز cookies12.txt: ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies10.txt
+[youtube] 6Q8e8tmKWMI: Downloading webpage
+[youtube] 6Q8e8tmKWMI: Downloading tv client config
+[youtube] 6Q8e8tmKWMI: Downloading tv player API JSON
+[info] 6Q8e8tmKWMI: Downloading 1 format(s): 140
+[download] Destination: حسين الجسمي - أحبّك (حصرياً) ｜ 2018.m4a
+[download]   0.0% of    4.67MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.67MiB at  Unknown B/s ETA Unknown[download]   0.1% of    4.67MiB at  Unknown B/s ETA Unknown[download]   0.3% of    4.67MiB at   14.39MiB/s ETA 00:00  [download]   0.6% of    4.67MiB at   23.51MiB/s ETA 00:00[download]   1.3% of    4.67MiB at   20.67MiB/s ETA 00:00[download]   2.7% of    4.67MiB at   30.26MiB/s ETA 00:00[download]   5.3% of    4.67MiB at   47.53MiB/s ETA 00:00[download]  10.7% of    4.67MiB at   68.38MiB/s ETA 00:00[download]  21.4% of    4.67MiB at   92.75MiB/s ETA 00:00[download]  42.9% of    4.67MiB at  146.76MiB/s ETA 00:00[download]  85.7% of    4.67MiB at   91.45MiB/s ETA 00:00[download] 100.0% of    4.67MiB at   73.97MiB/s ETA 00:00[download] 100% of    4.67MiB in 00:00:00 at 35.07MiB/s  
+WARNING: 6Q8e8tmKWMI: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
