@@ -19,7 +19,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMedi
 from pyrogram.enums import ChatMemberStatus
 from pytgcalls.exceptions import NoActiveGroupCall
 from pytgcalls import PyTgCalls
-from pytgcalls.types import AudioQuality, VideoQuality, MediaStream, StreamType
+from pytgcalls.types import AudioQuality, VideoQuality, MediaStream
 from pytgcalls.types import Update, StreamEnded
 
 # استيراد مكتبات التحميل
@@ -104,10 +104,14 @@ async def get_call(bot_username):
     if bot_username not in calls:
         try:
             # محاولة إنشاء كائن مكالمة جديد
-            from pytgcalls import PyTgCalls
-            call_instance = PyTgCalls(userbots.get(bot_username))
-            calls[bot_username] = call_instance
-            print(f"✅ تم إنشاء كائن مكالمة جديد للبوت: {bot_username}")
+            userbot = userbots.get(bot_username)
+            if userbot:
+                call_instance = PyTgCalls(userbot)
+                calls[bot_username] = call_instance
+                print(f"✅ تم إنشاء كائن مكالمة جديد للبوت: {bot_username}")
+            else:
+                print(f"❌ لا يوجد userbot للبوت: {bot_username}")
+                return None
         except Exception as e:
             print(f"❌ فشل في إنشاء كائن المكالمة للبوت {bot_username}: {e}")
             return None
@@ -194,7 +198,7 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
         
         # محاولة الانضمام للمكالمة
         try:
-            await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
+            await hoss.join_group_call(message.chat.id, stream)
             
             # إدارة آمنة للملفات الحالية
             with playlist_lock:
@@ -227,8 +231,8 @@ async def join_call(bot_username, client, message, audio_file, group_id, vid, mi
 async def _join_stream(hoss, message, stream, file_path):
     """انضمام للبث"""
     try:
-        await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
-        hossamm.append(file_path)
+        await hoss.join_group_call(message.chat.id, stream)
+        current_files[message.chat.id].append(file_path)
         return True
     except Exception:
         return False
@@ -739,6 +743,27 @@ async def start_periodic_cleanup():
 
 # بدء التنظيف الدوري بأمان
 cleanup_started = False
+
+async def initialize_play_system():
+    """تهيئة نظام التشغيل مع البوت الرئيسي"""
+    try:
+        from bot import bot, lolo
+        
+        # تسجيل البوت الرئيسي
+        bot_username = bot.me.username if hasattr(bot, 'me') and bot.me else "main_bot"
+        
+        # استخدام البوت الرئيسي كـ userbot إذا لم يكن هناك مساعد
+        if lolo:
+            register_bot_instances(bot_username, lolo)
+            print(f"✅ تم تسجيل البوت مع المساعد: {bot_username}")
+        else:
+            # إنشاء PyTgCalls مباشرة مع البوت
+            calls[bot_username] = PyTgCalls(bot)
+            userbots[bot_username] = bot
+            print(f"✅ تم تسجيل البوت بدون مساعد: {bot_username}")
+            
+    except Exception as e:
+        print(f"❌ خطأ في تهيئة نظام التشغيل: {e}")
 
 print("✅ تم تحميل نظام التشغيل الذكي المحسن بنجاح!")
 
