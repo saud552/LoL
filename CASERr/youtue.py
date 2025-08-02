@@ -5,7 +5,8 @@ import aiohttp
 import requests
 import random 
 import asyncio
-import time 
+import time
+import concurrent.futures 
 from datetime import datetime, timedelta
 from youtube_search import YoutubeSearch
 from pyrogram.errors import (ChatAdminRequired,
@@ -102,6 +103,16 @@ def clean_temp_files(*files):
 # متغير لتتبع الطلبات النشطة لمنع التكرار
 active_requests = {}
 
+# ThreadPoolExecutor للتحميل المتوازي
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+
+def download_with_ytdlp(url, opts):
+    """دالة التحميل المتزامنة للتنفيذ في thread منفصل"""
+    with YoutubeDL(opts) as ytdl:
+        ytdl_data = ytdl.extract_info(url, download=True)
+        audio_file = ytdl.prepare_filename(ytdl_data)
+        return ytdl_data, audio_file
+
 # دالة التحميل المشتركة
 async def download_audio(client, message, text):
     user_id = message.from_user.id if message.from_user else 0
@@ -109,10 +120,12 @@ async def download_audio(client, message, text):
     request_key = f"{user_id}_{text.lower().strip()}"
     unique_key = f"{user_id}_{message_id}_{text.lower().strip()}"
     
-    # فحص إذا كان هناك طلب نشط لنفس المستخدم ونفس النص
+    # فحص إذا كان هناك طلب نشط لنفس المستخدم ونفس النص بالضبط
     if request_key in active_requests:
-        print(f"🚫 تجاهل طلب مكرر: {text} (رسالة {message_id})")
-        return  # تجاهل الطلب المكرر
+        time_diff = time.time() - active_requests[request_key]
+        if time_diff < 5:  # فقط منع التكرار في أول 5 ثوان
+            print(f"🚫 تجاهل طلب مكرر: {text} (رسالة {message_id})")
+            return  # تجاهل الطلب المكرر
     
     # تسجيل الطلب كنشط
     active_requests[request_key] = time.time()
@@ -128,8 +141,8 @@ async def download_audio(client, message, text):
         audio_file = None
         sedlyf = None
         
-        # محاولة التحميل مع تدوير الكوكيز
-        max_retries = len(cookie_manager.cookies_files) if cookie_manager.cookies_files else 1
+        # محاولة التحميل مع تدوير الكوكيز (أقصى 3 محاولات للسرعة)
+        max_retries = min(3, len(cookie_manager.cookies_files)) if cookie_manager.cookies_files else 1
         
         download_success = False  # متغير لتتبع نجاح التحميل
         
@@ -144,9 +157,9 @@ async def download_audio(client, message, text):
                     await h.delete()
                     return await message.reply_text("لا توجد ملفات كوكيز متاحة")
                 
-                # البحث في YouTube
+                # البحث السريع في YouTube
                 search = SearchVideos(text, offset=1, mode="dict", max_results=1)
-                mi = search.result()
+                mi = await loop.run_in_executor(executor, search.result)
                 
                 if not mi or not mi.get("search_result") or len(mi["search_result"]) == 0:
                     await h.delete()
@@ -161,16 +174,38 @@ async def download_audio(client, message, text):
                 kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
                 sedlyf = wget.download(kekme, bar=None)
                 
-                # إعدادات التحميل مع الكوكيز الحالي
+                # إعدادات التحميل المحسنة لتجاوز الحظر
                 opts = {
-                    'format': 'bestaudio[ext=m4a]', 
-                    'outtmpl': '%(title)s.%(ext)s', 
-                    "cookiefile": cookie_file
+                    'format': 'bestaudio[ext=m4a]/bestaudio/best[height<=720]', 
+                    'outtmpl': '%(title)s.%(ext)s',
+                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'headers': {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.5',
+                        'Accept-Encoding': 'gzip, deflate',
+                        'DNT': '1',
+                        'Connection': 'keep-alive',
+                    },
+                    'extractor_args': {
+                        'youtube': {
+                            'skip': ['dash', 'hls'],
+                            'player_client': ['android', 'web'],
+                        }
+                    },
+                    'no_warnings': True,
+                    'ignoreerrors': True,
                 }
                 
-                with YoutubeDL(opts) as ytdl:
-                    ytdl_data = ytdl.extract_info(mo, download=True)
-                    audio_file = ytdl.prepare_filename(ytdl_data)
+                # إضافة الكوكيز فقط إذا كان الملف موجود
+                if cookie_file and os.path.exists(cookie_file):
+                    opts["cookiefile"] = cookie_file
+                
+                # تحميل متوازي لتحسين الأداء
+                loop = asyncio.get_event_loop()
+                ytdl_data, audio_file = await loop.run_in_executor(
+                    executor, download_with_ytdlp, mo, opts
+                )
                 
                 # إعداد الرسالة
                 capy = f"[{thum}]({mo})"
@@ -228,8 +263,11 @@ async def download_audio(client, message, text):
 @Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=1)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
-    # if await johned(client, message):
-    #  return
+    try:
+        if await johned(client, message):
+            return
+    except:
+        pass  # تجاهل أخطاء فحص الاشتراك
     
     # استخراج النص من الأمر
     text = message.text.split(" ", 1)
@@ -243,8 +281,11 @@ async def gigshgxvkdnnj(client, message):
 @Client.on_message(filters.text & ~filters.command([""]) & ~filters.bot, group=2)
 async def handle_text_download(client, message):
     bot_username = client.me.username
-    # if await johned(client, message):
-    #  return
+    try:
+        if await johned(client, message):
+            return
+    except:
+        pass  # تجاهل أخطاء فحص الاشتراك
     
     # تجاهل الرسائل التي تبدأ بـ / أو تحتوي على @
     if message.text.startswith('/') or '@' in message.text:
