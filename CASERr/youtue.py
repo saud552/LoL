@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 import threading
 import random 
 from collections import defaultdict
+from pytube import YouTube
+import traceback
+import httpx
 from pyrogram.errors import (ChatAdminRequired,
                              UserAlreadyParticipant,
                              UserNotParticipant)
@@ -21,6 +24,20 @@ import aiofiles
 from pyrogram.types import *
 import hashlib
 import weakref
+import httpx
+import hashlib
+import threading
+from pathlib import Path
+from collections import defaultdict, deque
+from datetime import datetime, timedelta
+from typing import Dict, Optional, Any, List, Tuple
+from pyrogram import Client, filters
+from pyrogram.types import Message
+from yt_dlp import YoutubeDL
+from youtubesearchpython import SearchVideos
+# إضافة pytube كطريقة احتياطية
+from pytube import YouTube
+import traceback
 
 # إعدادات البوت ومتغيرات النظام
 FORBIDDEN_WORDS_HASH = hashlib.md5(str([
@@ -265,6 +282,149 @@ async def download_thumbnail_async(url, timeout=30):
     except Exception as e:
         print(f"❌ خطأ في تحميل الصورة المصغرة: {e}")
         return None
+
+# طرق التحميل المتعددة
+class DownloadMethod:
+    """فئة لإدارة طرق التحميل المختلفة"""
+    
+    @staticmethod
+    async def download_with_ytdlp(video_url, opts):
+        """التحميل باستخدام yt-dlp"""
+        try:
+            def download_with_ytdl():
+                with YoutubeDL(opts) as ytdl:
+                    info = ytdl.extract_info(video_url, download=True)
+                    filename = ytdl.prepare_filename(info)
+                    return info, filename
+            
+            return await asyncio.get_event_loop().run_in_executor(
+                None, download_with_ytdl
+            )
+        except Exception as e:
+            print(f"فشل yt-dlp: {e}")
+            raise e
+    
+    @staticmethod
+    async def download_with_pytube(video_url):
+        """التحميل باستخدام pytube كطريقة احتياطية"""
+        try:
+            def download_with_pytube_sync():
+                # تجربة إعدادات مختلفة مع pytube
+                from pytube import YouTube
+                import ssl
+                ssl._create_default_https_context = ssl._create_unverified_context
+                
+                yt = YouTube(video_url, use_oauth=False, allow_oauth_cache=False)
+                # الحصول على أفضل جودة صوتية
+                audio_stream = yt.streams.filter(only_audio=True).first()
+                if not audio_stream:
+                    raise Exception("لا توجد تدفقات صوتية متاحة")
+                
+                # تحميل الملف
+                filename = f"pytube_{int(time.time() * 1000000)}_{yt.video_id}.{audio_stream.subtype}"
+                audio_stream.download(filename=filename)
+                
+                # إنشاء معلومات الفيديو
+                info = {
+                    'title': yt.title,
+                    'duration': yt.length,
+                    'uploader': yt.author,
+                    'id': yt.video_id
+                }
+                
+                return info, filename
+            
+            return await asyncio.get_event_loop().run_in_executor(
+                None, download_with_pytube_sync
+            )
+        except Exception as e:
+            print(f"فشل pytube: {e}")
+            raise e
+    
+    @staticmethod
+    async def download_with_ytdlp_alternative(video_url, opts):
+        """التحميل باستخدام yt-dlp مع إعدادات بديلة"""
+        try:
+            # إعدادات بديلة لـ yt-dlp
+            alt_opts = opts.copy()
+            alt_opts.update({
+                'extractor_args': {
+                    'youtube': {
+                        'player_client': ['web'],  # استخدام web client فقط
+                    }
+                },
+                'user_agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'headers': {
+                    'Accept-Language': 'ar,en;q=0.9',
+                    'Accept': '*/*',
+                }
+            })
+            
+            def download_with_ytdl_alt():
+                with YoutubeDL(alt_opts) as ytdl:
+                    info = ytdl.extract_info(video_url, download=True)
+                    filename = ytdl.prepare_filename(info)
+                    return info, filename
+            
+            return await asyncio.get_event_loop().run_in_executor(
+                None, download_with_ytdl_alt
+            )
+        except Exception as e:
+            print(f"فشل yt-dlp البديل: {e}")
+            raise e
+
+class SmartDownloadManager:
+    """مدير تحميل ذكي مع طرق متعددة وآلية retry"""
+    
+    def __init__(self):
+        self.download_methods = [
+            DownloadMethod.download_with_ytdlp,
+            DownloadMethod.download_with_ytdlp_alternative,
+            DownloadMethod.download_with_pytube,
+        ]
+    
+    async def smart_download(self, video_url, video_id, opts, status_message, request_id):
+        """تحميل ذكي مع طرق متعددة وآلية retry"""
+        last_exception = None
+        
+        # إشعار واحد فقط في البداية
+        await status_message.edit_text(
+            f"⬇️ جاري التحميل بأفضل طريقة متاحة... (ID: {request_id[:6]})"
+        )
+        
+        for method_index, method in enumerate(self.download_methods):
+            method_name = method.__name__.replace('download_with_', '')
+            
+            try:
+                print(f"🔄 محاولة التحميل باستخدام: {method_name}")
+                
+                if method in [DownloadMethod.download_with_ytdlp, DownloadMethod.download_with_ytdlp_alternative]:
+                    return await method(video_url, opts)
+                else:
+                    return await method(video_url)
+                    
+            except Exception as e:
+                last_exception = e
+                print(f"❌ فشل {method_name}: {e}")
+                
+                # إذا لم تكن الطريقة الأخيرة، جرب التالية
+                if method_index < len(self.download_methods) - 1:
+                    print(f"🔄 جاري التبديل للطريقة التالية...")
+                    await asyncio.sleep(1)  # انتظار قصير بين المحاولات
+                    continue
+                else:
+                    # إذا فشلت جميع الطرق
+                    print(f"❌ فشلت جميع طرق التحميل")
+                    break
+        
+        # إذا فشلت جميع الطرق
+        if last_exception:
+            raise last_exception
+        else:
+            raise Exception("فشلت جميع طرق التحميل")
+
+# إنشاء مثيل مدير التحميل الذكي
+smart_download_manager = SmartDownloadManager()
 
 def generate_cache_key(text):
     """إنشاء مفتاح فريد للكاش"""
@@ -649,20 +809,29 @@ async def download_audio(client, message, text):
             'writethumbnail': False,
             'writeinfojson': False,
             'ignoreerrors': True,
-            'retries': 3,
-            'fragment_retries': 3,
-            'socket_timeout': 300,  # تم رفع timeout إلى 5 دقائق
+            'retries': 5,  # زيادة المحاولات
+            'fragment_retries': 5,
+            'socket_timeout': 300,
+            # إضافة خيارات لتجنب مشاكل YouTube
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android', 'web'],
+                    'skip': ['hls', 'dash']
+                }
+            },
+            'headers': {
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+            }
         }
         
-        # تحميل الملف في thread منفصل لعدم حجب البوت
-        def download_with_ytdl():
-            with YoutubeDL(opts) as ytdl:
-                info = ytdl.extract_info(video_url, download=True)
-                filename = ytdl.prepare_filename(info)
-                return info, filename
-        
-        ytdl_data, audio_file = await asyncio.get_event_loop().run_in_executor(
-            None, download_with_ytdl
+        # استخدام النظام الذكي للتحميل مع طرق متعددة
+        ytdl_data, audio_file = await smart_download_manager.smart_download(
+            video_url, video_id, opts, status_message, request_id
         )
         
         # فحص إلغاء الطلب بعد التحميل
@@ -736,17 +905,21 @@ async def download_audio(client, message, text):
         except:
             pass
         
-        # رسائل خطأ مفصلة
-        if "Sign in to confirm your age" in error_msg:
-            error_response = "❌ هذا الفيديو يتطلب تسجيل دخول للتأكد من العمر"
-        elif "Video unavailable" in error_msg:
+        # رسائل خطأ مفصلة ومحسنة
+        if "Sign in to confirm your age" in error_msg or "confirm you're not a bot" in error_msg:
+            error_response = "❌ هذا الفيديو يتطلب تأكيد إضافي من YouTube"
+        elif "Video unavailable" in error_msg or "This video is unavailable" in error_msg:
             error_response = "❌ هذا الفيديو غير متاح أو محذوف"
         elif "Private video" in error_msg:
             error_response = "❌ هذا فيديو خاص"
-        elif "blocked" in error_msg.lower():
-            error_response = "❌ هذا الفيديو محجوب في منطقتك"
+        elif "blocked" in error_msg.lower() or "not available" in error_msg.lower():
+            error_response = "❌ هذا الفيديو محجوب أو غير متاح في منطقتك"
+        elif "فشلت جميع طرق التحميل" in error_msg:
+            error_response = "❌ فشل التحميل بجميع الطرق المتاحة، قد يكون الفيديو محمي"
+        elif "لا توجد تدفقات صوتية متاحة" in error_msg:
+            error_response = "❌ لا توجد ملفات صوتية متاحة لهذا الفيديو"
         else:
-            error_response = "❌ حدث خطأ أثناء التحميل، حاول مرة أخرى"
+            error_response = "❌ فشل التحميل، جرب فيديو آخر"
         
         await message.reply_text(error_response)
         
