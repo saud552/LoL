@@ -15,7 +15,8 @@ from typing import Dict, Optional, Union
 
 # استيراد مكتبات Pyrogram
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto, Message
+from pyrogram.enums import ChatMemberStatus
 from pytgcalls.exceptions import NoActiveGroupCall
 from pytgcalls import PyTgCalls
 from pytgcalls.types import AudioQuality, VideoQuality, MediaStream, StreamType
@@ -40,6 +41,15 @@ system_stats = {
     'start_time': time.time()
 }
 
+# تعريف المتغيرات المفقودة
+calls = {}  # قاموس لحفظ كائنات المكالمات
+userbots = {}  # قاموس لحفظ كائنات المستخدمين
+DOWNLOAD_FOLDER = "downloads"  # مجلد التحميل
+
+# إنشاء مجلد التحميل إذا لم يكن موجوداً
+if not os.path.exists(DOWNLOAD_FOLDER):
+    os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+
 # إحصائيات التشغيل
 play_stats = {
     'total_requests': 0,
@@ -50,13 +60,20 @@ play_stats = {
     'start_time': time.time()
 }
 
-# متغيرات التشغيل
-playing = {}
-hossamm = []
+# متغيرات التشغيل محسنة مع Thread Safety
+import threading
+from collections import defaultdict
+
+# قفل للحماية من التضارب
+playlist_lock = threading.RLock()
+
+# متغيرات التشغيل آمنة
+playing = {}  # حالة التشغيل لكل مجموعة
+current_files = defaultdict(list)  # الملفات الحالية لكل مجموعة
 count = 0
-coun = {}
-vidd = {}
-playlist = {}
+playlist = defaultdict(list)  # قائمة التشغيل لكل مجموعة
+video_queue = defaultdict(list)  # قائمة الفيديوهات
+count_queue = defaultdict(list)  # قائمة العدادات
 
 def update_play_stats(success: bool, from_cache: bool = False, hybrid_used: bool = False):
     """تحديث إحصائيات التشغيل"""
@@ -83,12 +100,44 @@ async def get_play_statistics() -> Dict:
     }
 
 async def get_call(bot_username):
-    """الحصول على كائن المكالمة"""
+    """الحصول على كائن المكالمة مع إنشاء تلقائي"""
+    if bot_username not in calls:
+        try:
+            # محاولة إنشاء كائن مكالمة جديد
+            from pytgcalls import PyTgCalls
+            call_instance = PyTgCalls(userbots.get(bot_username))
+            calls[bot_username] = call_instance
+            print(f"✅ تم إنشاء كائن مكالمة جديد للبوت: {bot_username}")
+        except Exception as e:
+            print(f"❌ فشل في إنشاء كائن المكالمة للبوت {bot_username}: {e}")
+            return None
     return calls.get(bot_username)
 
 async def get_userbot(bot_username):
-    """الحصول على كائن المستخدم"""
+    """الحصول على كائن المستخدم مع تسجيل الدخول التلقائي"""
+    if bot_username not in userbots:
+        try:
+            # محاولة إنشاء كائن userbot جديد
+            print(f"⚠️ لا يوجد userbot للبوت {bot_username}، يجب تسجيل الدخول أولاً")
+            return None
+        except Exception as e:
+            print(f"❌ خطأ في الحصول على userbot للبوت {bot_username}: {e}")
+            return None
     return userbots.get(bot_username)
+
+def register_bot_instances(bot_username, userbot_instance, call_instance=None):
+    """تسجيل كائنات البوت والمكالمة"""
+    try:
+        userbots[bot_username] = userbot_instance
+        if call_instance:
+            calls[bot_username] = call_instance
+        else:
+            calls[bot_username] = PyTgCalls(userbot_instance)
+        print(f"✅ تم تسجيل كائنات البوت: {bot_username}")
+        return True
+    except Exception as e:
+        print(f"❌ فشل في تسجيل كائنات البوت {bot_username}: {e}")
+        return False
 
 async def join_assistant(client, hoss_chat_user, user):
     """انضمام المساعد للمكالمة"""
@@ -117,44 +166,62 @@ async def pphoto(client, message, mi, user_mention, count):
         print(f"خطأ في إرسال الصورة: {e}")
 
 async def join_call(bot_username, client, message, audio_file, group_id, vid, mi, user_mention):
-    """انضمام للمكالمة وتشغيل الصوت"""
-    global count
-    userbot = await get_userbot(bot_username)
-    hoss = await get_call(bot_username)
-    file_path = audio_file
-    
-    audio_stream_quality = AudioQuality.MEDIUM
-    video_stream_quality = VideoQuality.MEDIUM
-    stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
-              if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
-    
+    """انضمام للمكالمة وتشغيل الصوت مع إدارة آمنة"""
     try:
-        await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
-        hossamm.append(file_path)
-        count = 0
-        await pphoto(client, message, mi, user_mention, count)
-        return True
-    except Exception as e:
-        print(f"خطأ في الانضمام: {e}")
-        # محاولة ثانية
+        userbot = await get_userbot(bot_username)
+        hoss = await get_call(bot_username)
+        
+        if not hoss:
+            print(f"❌ لا يوجد كائن مكالمة للبوت: {bot_username}")
+            return False
+            
+        file_path = audio_file
+        
+        # التحقق من وجود الملف
+        if not os.path.exists(file_path):
+            print(f"❌ الملف غير موجود: {file_path}")
+            return False
+        
+        audio_stream_quality = AudioQuality.MEDIUM
+        video_stream_quality = VideoQuality.MEDIUM
+        
+        try:
+            stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
+                      if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
+        except Exception as stream_error:
+            print(f"❌ خطأ في إنشاء البث: {stream_error}")
+            return False
+        
+        # محاولة الانضمام للمكالمة
         try:
             await hoss.join_group_call(message.chat.id, stream, stream_type=StreamType.PULSE_STREAM)
-            hossamm.append(file_path)
-            Done = True
-        except Exception:
-            pass
-        
-        if group_id not in playlist:
-            playlist[group_id] = []
-            vidd[group_id] = []
-            coun[group_id] = []
-        
-        playlist[group_id].append(file_path)
-        vidd[group_id].append(vid)
-        coun[group_id].append(count)
-        count = len(playlist[group_id])
-        coun[group_id].append(count)
-        await pphoto(client, message, mi, user_mention, count)
+            
+            # إدارة آمنة للملفات الحالية
+            with playlist_lock:
+                current_files[group_id].clear()
+                current_files[group_id].append(file_path)
+                playing[group_id] = True
+                
+            await pphoto(client, message, mi, user_mention, 1)
+            print(f"✅ تم بدء التشغيل بنجاح في المجموعة {group_id}")
+            return True
+            
+        except Exception as join_error:
+            print(f"❌ فشل الانضمام الأولي: {join_error}")
+            
+            # إضافة للقائمة في حالة الفشل
+            with playlist_lock:
+                playlist[group_id].append(file_path)
+                video_queue[group_id].append(vid)
+                queue_position = len(playlist[group_id])
+                count_queue[group_id].append(queue_position)
+                
+            await pphoto(client, message, mi, user_mention, queue_position)
+            print(f"➕ تم إضافة المقطع للقائمة في المجموعة {group_id} - الموضع: {queue_position}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ خطأ عام في join_call: {e}")
         return False
 
 async def _join_stream(hoss, message, stream, file_path):
@@ -167,29 +234,85 @@ async def _join_stream(hoss, message, stream, file_path):
         return False
 
 async def change_stream(bot_username, chat_id, client, message):
-    """تغيير البث"""
-    hoss = await get_call(bot_username)
-    if chat_id in playlist and playlist[chat_id]:
-        file_path = playlist[chat_id][0]
-        vid = vidd[chat_id][0]
+    """تغيير البث مع إدارة آمنة للأخطاء"""
+    try:
+        hoss = await get_call(bot_username)
+        if not hoss:
+            print(f"❌ لا يوجد كائن مكالمة للبوت: {bot_username}")
+            return False
+            
+        with playlist_lock:
+            if not playlist[chat_id]:
+                print(f"📭 قائمة التشغيل فارغة للمجموعة {chat_id}")
+                # إنهاء المكالمة إذا لم تعد هناك مقاطع
+                try:
+                    await hoss.leave_group_call(chat_id)
+                    playing[chat_id] = False
+                    current_files[chat_id].clear()
+                except:
+                    pass
+                return False
+                
+            # الحصول على المقطع التالي
+            file_path = playlist[chat_id][0]
+            vid = video_queue[chat_id][0] if video_queue[chat_id] else False
+            
+        # التحقق من وجود الملف
+        if not os.path.exists(file_path):
+            print(f"❌ الملف التالي غير موجود: {file_path}")
+            # إزالة الملف المفقود والمحاولة مع التالي
+            with playlist_lock:
+                playlist[chat_id].pop(0)
+                if video_queue[chat_id]:
+                    video_queue[chat_id].pop(0)
+                if count_queue[chat_id]:
+                    count_queue[chat_id].pop(0)
+            return await change_stream(bot_username, chat_id, client, message)
+        
         mi = "https://telegra.ph/file/1063fced1455967ed0d83.jpg"
         
         try:
             audio_stream_quality = AudioQuality.MEDIUM
             video_stream_quality = VideoQuality.MEDIUM
-            hossamm.clear()
-            stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
+            
+            # إنشاء البث الجديد
+            stream = (MediaStream(file_path, audio_parameters=audio_stream_quality, video_parameters=video_stream_quality) 
+                     if vid else MediaStream(file_path, audio_parameters=audio_stream_quality))
+            
+            # تغيير البث
             await hoss.change_stream(chat_id, stream)
-            hossamm.append(file_path)
+            
+            # تحديث المتغيرات بأمان
+            with playlist_lock:
+                current_files[chat_id].clear()
+                current_files[chat_id].append(file_path)
+                
+                # إزالة من القائمة
+                playlist[chat_id].pop(0)
+                if video_queue[chat_id]:
+                    video_queue[chat_id].pop(0)
+                if count_queue[chat_id]:
+                    count_queue[chat_id].pop(0)
+            
             await pphoto(client, message, mi, "النظام", 1)
+            print(f"✅ تم تغيير البث بنجاح في المجموعة {chat_id}")
+            return True
             
-            # إزالة من القائمة
-            playlist[chat_id].pop(0)
-            vidd[chat_id].pop(0)
-            coun[chat_id].pop(0)
+        except Exception as stream_error:
+            print(f"❌ خطأ في تغيير البث: {stream_error}")
+            # محاولة إنهاء المكالمة في حالة الفشل
+            try:
+                await hoss.leave_group_call(chat_id)
+                with playlist_lock:
+                    playing[chat_id] = False
+                    current_files[chat_id].clear()
+            except:
+                pass
+            return False
             
-        except Exception as e:
-            print(f"خطأ في تغيير البث: {e}")
+    except Exception as e:
+        print(f"❌ خطأ عام في تغيير البث: {e}")
+        return False
 
 async def smart_music_search_and_play(
     message: Message,
@@ -217,35 +340,59 @@ async def smart_music_search_and_play(
         mo = video_info["link"]
         title = video_info["title"]
         
-        # تحضير مسار الملف
-        audio_file = os.path.join(DOWNLOAD_FOLDER, f"{title}.mp4")
+        # تحضير مسار الملف آمن
+        video_id = video_info.get('id', '')
+        safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()[:50]
+        audio_file = os.path.join(DOWNLOAD_FOLDER, f"{video_id}_{safe_title}.%(ext)s")
         
-        # التحقق من وجود الملف
-        if os.path.exists(audio_file):
+        # البحث عن ملف موجود بنفس video_id
+        existing_file = None
+        if os.path.exists(DOWNLOAD_FOLDER):
+            for file in os.listdir(DOWNLOAD_FOLDER):
+                if file.startswith(video_id):
+                    existing_file = os.path.join(DOWNLOAD_FOLDER, file)
+                    break
+        
+        if existing_file and os.path.exists(existing_file):
             print(f"✅ الملف موجود في الكاش: {title}")
             update_play_stats(success=True, from_cache=True)
             return {
                 'title': title,
                 'duration': 0,
-                'file_path': audio_file,
-                'thumbnail': f"https://img.youtube.com/vi/{video_info.get('id', '')}/hqdefault.jpg",
+                'file_path': existing_file,
+                'thumbnail': f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg",
                 'uploader': video_info.get('channel', 'قناة غير محددة'),
                 'url': mo,
-                'video_id': video_info.get('id', ''),
+                'video_id': video_id,
                 'source': 'cache'
             }
         
-        # تحميل الملف مع تدوير الكوكيز
-        cookie_files = [
-            "/workspace/cookies/cookies1.txt",
-            "/workspace/cookies/cookies2.txt", 
-            "/workspace/cookies/cookies3.txt",
-            "/workspace/cookies/cookies4.txt",
-            "/workspace/cookies/cookies5.txt",
-            "/workspace/cookies/cookies6.txt"
-        ]
+        # تحميل الملف مع تدوير الكوكيز وإدارة آمنة للموارد
+        cookies_dir = "/workspace/cookies"
+        cookie_files = []
+        
+        # البحث عن ملفات الكوكيز بشكل آمن
+        if os.path.exists(cookies_dir):
+            try:
+                for file in os.listdir(cookies_dir):
+                    if file.endswith('.txt'):
+                        cookie_path = os.path.join(cookies_dir, file)
+                        if os.path.isfile(cookie_path):
+                            cookie_files.append(cookie_path)
+            except Exception as e:
+                print(f"خطأ في قراءة مجلد الكوكيز: {e}")
+        
+        # إضافة ملفات افتراضية إذا لم توجد
+        if not cookie_files:
+            cookie_files = [
+                "/workspace/cookies/cookies1.txt",
+                "/workspace/cookies/cookies2.txt"
+            ]
         
         download_success = False
+        downloaded_file = None
+        ytdl_data = None
+        
         for cookie_file in cookie_files:
             if os.path.exists(cookie_file):
                 try:
@@ -256,20 +403,30 @@ async def smart_music_search_and_play(
                         "cookiefile": cookie_file,
                         "no_warnings": True,
                         "extract_flat": False,
+                        "noplaylist": True,
+                        "max_filesize": 100 * 1024 * 1024,  # حد أقصى 100MB
                     }
                     
                     with YoutubeDL(opts) as ytdl:
                         ytdl_data = ytdl.extract_info(mo, download=True)
-                        audio_file = ytdl.prepare_filename(ytdl_data)
+                        downloaded_file = ytdl.prepare_filename(ytdl_data)
                     
-                    download_success = True
-                    break
+                    # التحقق من وجود الملف المحمل
+                    if downloaded_file and os.path.exists(downloaded_file):
+                        download_success = True
+                        break
                     
                 except Exception as e:
                     print(f"فشل التحميل مع {cookie_file}: {e}")
+                    # تنظيف أي ملفات مؤقتة في حالة الفشل
+                    if downloaded_file and os.path.exists(downloaded_file):
+                        try:
+                            os.remove(downloaded_file)
+                        except:
+                            pass
                     continue
         
-        if not download_success:
+        if not download_success or not downloaded_file:
             print(f"❌ فشل في تحميل المقطع: {query}")
             update_play_stats(success=False)
             return None
@@ -282,12 +439,12 @@ async def smart_music_search_and_play(
         
         return {
             'title': title,
-            'duration': ytdl_data.get('duration', 0),
-            'file_path': audio_file,
-            'thumbnail': f"https://img.youtube.com/vi/{video_info.get('id', '')}/hqdefault.jpg",
+            'duration': ytdl_data.get('duration', 0) if ytdl_data else 0,
+            'file_path': downloaded_file,
+            'thumbnail': f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg",
             'uploader': video_info.get('channel', 'قناة غير محددة'),
             'url': mo,
-            'video_id': video_info.get('id', ''),
+            'video_id': video_id,
             'source': 'hybrid_download'
         }
         
@@ -308,6 +465,17 @@ Nem = "شغل"
 )
 async def enhanced_play_command(client, message: Message):
     """أمر التشغيل المحسن مع النظام المختلط"""
+    
+    # بدء التنظيف الدوري عند أول استخدام
+    global cleanup_started
+    if not cleanup_started:
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(periodic_cleanup())
+            cleanup_started = True
+            print("✅ تم بدء التنظيف الدوري")
+        except Exception as e:
+            print(f"⚠️ لم يتم بدء التنظيف الدوري: {e}")
     
     start_time = time.time()
     
@@ -502,27 +670,75 @@ async def resume_playback(client, message):
         await ho.edit_text("**مفيش حاجه شغاله اصلا**")
 
 # إضافة تنظيف دوري للملفات المؤقتة
+async def safe_remove_file(file_path: str) -> bool:
+    """حذف ملف بأمان مع التحقق من الاستخدام"""
+    try:
+        if not os.path.exists(file_path):
+            return True
+            
+        # التحقق إذا كان الملف مستخدم حالياً
+        with playlist_lock:
+            for group_files in current_files.values():
+                if file_path in group_files:
+                    return False  # الملف مستخدم حالياً
+            
+            # التحقق في قوائل التشغيل
+            for group_playlist in playlist.values():
+                if file_path in group_playlist:
+                    return False  # الملف في قائمة الانتظار
+        
+        # حذف الملف
+        os.remove(file_path)
+        return True
+        
+    except Exception as e:
+        print(f"❌ خطأ في حذف الملف {file_path}: {e}")
+        return False
+
 async def periodic_cleanup():
-    """تنظيف دوري للملفات المؤقتة"""
+    """تنظيف دوري للملفات المؤقتة مع حماية الملفات المستخدمة"""
     while True:
         try:
             await asyncio.sleep(3600)  # كل ساعة
             cleaned_count = 0
+            protected_count = 0
+            
             if os.path.exists(DOWNLOAD_FOLDER):
+                current_time = time.time()
+                
                 for file in os.listdir(DOWNLOAD_FOLDER):
                     file_path = os.path.join(DOWNLOAD_FOLDER, file)
+                    
                     if os.path.isfile(file_path):
-                        # حذف الملفات الأقدم من ساعة
-                        if time.time() - os.path.getmtime(file_path) > 3600:
-                            os.remove(file_path)
-                            cleaned_count += 1
-            if cleaned_count > 0:
-                print(f"🧹 تم تنظيف {cleaned_count} ملف قديم تلقائياً")
+                        # حذف الملفات الأقدم من ساعتين
+                        file_age = current_time - os.path.getmtime(file_path)
+                        
+                        if file_age > 7200:  # ساعتين
+                            if await safe_remove_file(file_path):
+                                cleaned_count += 1
+                            else:
+                                protected_count += 1
+                                
+            if cleaned_count > 0 or protected_count > 0:
+                print(f"🧹 تنظيف تلقائي: حُذف {cleaned_count} ملف، حُمي {protected_count} ملف مستخدم")
+                
         except Exception as e:
             print(f"❌ خطأ في التنظيف الدوري: {e}")
+            await asyncio.sleep(60)  # انتظار دقيقة قبل المحاولة مرة أخرى
 
-# بدء التنظيف الدوري
-asyncio.create_task(periodic_cleanup())
+# دالة لبدء التنظيف الدوري بأمان
+async def start_periodic_cleanup():
+    """بدء التنظيف الدوري بأمان"""
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(periodic_cleanup())
+        print("✅ تم بدء التنظيف الدوري")
+    except RuntimeError:
+        # إذا لم يكن هناك loop يعمل، سيتم بدؤه لاحقاً
+        print("⏳ سيتم بدء التنظيف الدوري عند تشغيل البوت")
+
+# بدء التنظيف الدوري بأمان
+cleanup_started = False
 
 print("✅ تم تحميل نظام التشغيل الذكي المحسن بنجاح!")
 
