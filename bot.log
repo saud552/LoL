@@ -25,3 +25,118 @@ Licensed under the terms of the GNU Lesser General Public License v3 or later (L
 [download] Destination: جنات - بحبك ⧸  Jannat - Bahbak.m4a
 [download]   0.0% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.8% of    3.83MiB at   20.54MiB/s ETA 00:00  [download]   1.6% of    3.83MiB at   18.55MiB/s ETA 00:00[download]   3.2% of    3.83MiB at   24.00MiB/s ETA 00:00[download]   6.5% of    3.83MiB at   36.36MiB/s ETA 00:00[download]  13.0% of    3.83MiB at   51.32MiB/s ETA 00:00[download]  26.1% of    3.83MiB at   85.66MiB/s ETA 00:00[download]  52.2% of    3.83MiB at  137.03MiB/s ETA 00:00[download] 100.0% of    3.83MiB at   51.55MiB/s ETA 00:00[download] 100% of    3.83MiB in 00:00:00 at 21.09MiB/s  
 WARNING: yOVVbM9YtWM: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
+✅ تم إرسال الملف بنجاح: جنات - بحبك /  Jannat - Bahbak
+تم إنهاء معالجة الطلب: بحبك
+بدء معالجة طلب جديد: بحبك
+استخدام ملف الكوكيز: cookies3.txt
+[youtube] yOVVbM9YtWM: Downloading webpage
+[youtube] yOVVbM9YtWM: Downloading tv client config
+[youtube] yOVVbM9YtWM: Downloading tv player API JSON
+[youtube] yOVVbM9YtWM: Downloading ios player API JSON
+ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
+محاولة 1 فشلت مع ملف الكوكيز cookies3.txt: ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies1.txt
+[youtube] yOVVbM9YtWM: Downloading webpage
+[youtube] yOVVbM9YtWM: Downloading tv client config
+[youtube] yOVVbM9YtWM: Downloading tv player API JSON
+[youtube] yOVVbM9YtWM: Downloading ios player API JSON
+ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
+محاولة 2 فشلت مع ملف الكوكيز cookies1.txt: ERROR: [youtube] yOVVbM9YtWM: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies9.txt
+[youtube] yOVVbM9YtWM: Downloading webpage
+[youtube] yOVVbM9YtWM: Downloading tv client config
+[youtube] yOVVbM9YtWM: Downloading tv player API JSON
+ERROR: [youtube] yOVVbM9YtWM: Video unavailable. This content isn’t available.
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yOVVbM9YtWM
+محاولة 3 فشلت مع ملف الكوكيز cookies9.txt: ERROR: [youtube] yOVVbM9YtWM: Video unavailable. This content isn’t available.
+استخدام ملف الكوكيز: cookies7.txt
+[youtube] yOVVbM9YtWM: Downloading webpage
+[youtube] yOVVbM9YtWM: Downloading tv client config
+[youtube] yOVVbM9YtWM: Downloading tv player API JSON
+[info] yOVVbM9YtWM: Downloading 1 format(s): 140
+[download] Destination: جنات - بحبك ⧸  Jannat - Bahbak.m4a
+[download]   0.0% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.1% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.2% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.4% of    3.83MiB at  Unknown B/s ETA Unknown[download]   0.8% of    3.83MiB at   26.08MiB/s ETA 00:00  [download]   1.6% of    3.83MiB at   21.18MiB/s ETA 00:00[download]   3.2% of    3.83MiB at   27.41MiB/s ETA 00:00[download]   6.5% of    3.83MiB at   44.60MiB/s ETA 00:00[download]  13.0% of    3.83MiB at   59.82MiB/s ETA 00:00[download]  26.1% of    3.83MiB at   96.80MiB/s ETA 00:00[download]  52.2% of    3.83MiB at  137.48MiB/s ETA 00:00[download] 100.0% of    3.83MiB at  200.60MiB/s ETA 00:00[download] 100% of    3.83MiB in 00:00:00 at 70.90MiB/s  
+WARNING: yOVVbM9YtWM: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+✅ تم إرسال الملف بنجاح: جنات - بحبك /  Jannat - Bahbak
+تم إنهاء معالجة الطلب: بحبك
+بدء معالجة طلب جديد: حبيبي انت
+استخدام ملف الكوكيز: cookies13.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 1 فشلت مع ملف الكوكيز cookies13.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies2.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 2 فشلت مع ملف الكوكيز cookies2.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies6.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 3 فشلت مع ملف الكوكيز cookies6.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies5.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 4 فشلت مع ملف الكوكيز cookies5.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies8.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 5 فشلت مع ملف الكوكيز cookies8.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies11.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[info] Ite-wqdZCH4: Downloading 1 format(s): 140
+[download] Destination: حبيبي انت - ملحم بركات.m4a
+[download]   0.0% of   10.78MiB at  618.26KiB/s ETA 00:17[download]   0.0% of   10.78MiB at    1.50MiB/s ETA 00:07[download]   0.1% of   10.78MiB at    3.17MiB/s ETA 00:03[download]   0.1% of   10.78MiB at    6.32MiB/s ETA 00:01[download]   0.3% of   10.78MiB at    1.40MiB/s ETA 00:07[download]   0.6% of   10.78MiB at    1.51MiB/s ETA 00:07[download]   1.2% of   10.78MiB at    2.11MiB/s ETA 00:05[download]   2.3% of   10.78MiB at    3.12MiB/s ETA 00:03[download]   4.6% of   10.78MiB at    4.99MiB/s ETA 00:02[download]   9.3% of   10.78MiB at    8.29MiB/s ETA 00:01[download]  18.6% of   10.78MiB at   14.25MiB/s ETA 00:00[download]  37.1% of   10.78MiB at   24.72MiB/s ETA 00:00[download]  74.2% of   10.78MiB at   34.59MiB/s ETA 00:00[download]  89.0% of   10.78MiB at   38.98MiB/s ETA 00:00[download]  89.0% of   10.78MiB at  655.77KiB/s ETA 00:01[download]  89.0% of   10.78MiB at    1.53MiB/s ETA 00:00[download]  89.1% of   10.78MiB at    3.20MiB/s ETA 00:00[download]  89.1% of   10.78MiB at    6.33MiB/s ETA 00:00[download]  89.3% of   10.78MiB at    1.31MiB/s ETA 00:00[download]  89.6% of   10.78MiB at    1.41MiB/s ETA 00:00[download]  90.2% of   10.78MiB at    1.95MiB/s ETA 00:00[download]  91.3% of   10.78MiB at    2.92MiB/s ETA 00:00[download]  93.6% of   10.78MiB at    4.62MiB/s ETA 00:00[download]  98.3% of   10.78MiB at    7.66MiB/s ETA 00:00[download] 100.0% of   10.78MiB at    8.82MiB/s ETA 00:00[download] 100% of   10.78MiB in 00:00:00 at 15.71MiB/s  
+WARNING: Ite-wqdZCH4: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+✅ تم إرسال الملف بنجاح: حبيبي انت - ملحم بركات
+تم إنهاء معالجة الطلب: حبيبي انت
+بدء معالجة طلب جديد: حبيبي انت
+استخدام ملف الكوكيز: cookies4.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 1 فشلت مع ملف الكوكيز cookies4.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies12.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[youtube] Ite-wqdZCH4: Downloading ios player API JSON
+ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Ite-wqdZCH4
+محاولة 2 فشلت مع ملف الكوكيز cookies12.txt: ERROR: [youtube] Ite-wqdZCH4: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+استخدام ملف الكوكيز: cookies10.txt
+[youtube] Ite-wqdZCH4: Downloading webpage
+[youtube] Ite-wqdZCH4: Downloading tv client config
+[youtube] Ite-wqdZCH4: Downloading tv player API JSON
+[info] Ite-wqdZCH4: Downloading 1 format(s): 140
+[download] Destination: حبيبي انت - ملحم بركات.m4a
+[download]   0.0% of   10.78MiB at  591.75KiB/s ETA 00:18[download]   0.0% of   10.78MiB at    1.49MiB/s ETA 00:07[download]   0.1% of   10.78MiB at    3.17MiB/s ETA 00:03[download]   0.1% of   10.78MiB at    5.33MiB/s ETA 00:02[download]   0.3% of   10.78MiB at    1.33MiB/s ETA 00:08[download]   0.6% of   10.78MiB at    1.44MiB/s ETA 00:07[download]   1.2% of   10.78MiB at    2.00MiB/s ETA 00:05[download]   2.3% of   10.78MiB at    2.98MiB/s ETA 00:03[download]   4.6% of   10.78MiB at    4.73MiB/s ETA 00:02[download]   9.3% of   10.78MiB at    7.89MiB/s ETA 00:01[download]  18.6% of   10.78MiB at   13.48MiB/s ETA 00:00[download]  37.1% of   10.78MiB at   23.51MiB/s ETA 00:00[download]  74.2% of   10.78MiB at   39.68MiB/s ETA 00:00[download]  88.3% of   10.78MiB at   45.64MiB/s ETA 00:00[download]  88.3% of   10.78MiB at  Unknown B/s ETA Unknown[download]  88.3% of   10.78MiB at  Unknown B/s ETA Unknown[download]  88.4% of   10.78MiB at  Unknown B/s ETA Unknown[download]  88.4% of   10.78MiB at  Unknown B/s ETA Unknown[download]  88.6% of   10.78MiB at   18.62MiB/s ETA 00:00  [download]  88.9% of   10.78MiB at   18.19MiB/s ETA 00:00[download]  89.4% of   10.78MiB at   21.76MiB/s ETA 00:00[download]  90.6% of   10.78MiB at   11.99MiB/s ETA 00:00[download]  92.9% of   10.78MiB at   14.63MiB/s ETA 00:00[download]  97.6% of   10.78MiB at   26.16MiB/s ETA 00:00[download] 100.0% of   10.78MiB at   32.50MiB/s ETA 00:00[download] 100% of   10.78MiB in 00:00:00 at 15.59MiB/s  
+WARNING: Ite-wqdZCH4: writing DASH m4a. Only some players support this container. Install ffmpeg to fix this automatically
