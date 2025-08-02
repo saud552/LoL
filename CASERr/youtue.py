@@ -204,6 +204,7 @@ user_request_count = defaultdict(lambda: {'count': 0, 'last_reset': time.time()}
 search_cache = {}  # كاش للبحثات
 download_cache = {}  # كاش للملفات المحملة
 active_downloads = {}  # تتبع التحميلات النشطة لمنع التكرار
+request_tracking = {}  # تتبع شامل للطلبات مع إمكانية الإلغاء
 cache_lock = threading.RLock()
 MAX_CACHE_SIZE = 1000  # حد أقصى لحجم الكاش
 DOWNLOAD_CACHE_SIZE = 200  # حد أقصى للملفات المحملة في الكاش
@@ -369,6 +370,100 @@ async def finish_download_tracking(video_id, user_id):
         if download_key in active_downloads:
             del active_downloads[download_key]
 
+class RequestTracker:
+    """فئة لتتبع الطلبات ومنع التداخل"""
+    
+    def __init__(self, request_id, user_id, video_id=None):
+        self.request_id = request_id
+        self.user_id = user_id
+        self.video_id = video_id
+        self.is_cancelled = False
+        self.is_completed = False
+        self.start_time = time.time()
+        self.current_stage = "initialized"
+        
+        # تسجيل الطلب
+        with cache_lock:
+            request_tracking[request_id] = self
+    
+    def update_stage(self, stage):
+        """تحديث مرحلة الطلب"""
+        if not self.is_cancelled and not self.is_completed:
+            self.current_stage = stage
+            print(f"🔄 طلب {self.request_id}: {stage}")
+    
+    def cancel(self, reason="تم الإلغاء"):
+        """إلغاء الطلب"""
+        self.is_cancelled = True
+        self.current_stage = f"cancelled: {reason}"
+        print(f"❌ طلب {self.request_id} تم إلغاؤه: {reason}")
+    
+    def complete(self, success=True, method="unknown"):
+        """إكمال الطلب"""
+        self.is_completed = True
+        self.current_stage = f"completed via {method}"
+        
+        # إنهاء تتبع التحميل إذا كان موجوداً
+        if self.video_id:
+            asyncio.create_task(finish_download_tracking(self.video_id, self.user_id))
+        
+        # إزالة من التتبع
+        with cache_lock:
+            if self.request_id in request_tracking:
+                del request_tracking[self.request_id]
+        
+        status = "✅" if success else "❌"
+        print(f"{status} طلب {self.request_id} اكتمل عبر: {method}")
+    
+    def is_active(self):
+        """فحص إذا كان الطلب نشطاً"""
+        return not self.is_cancelled and not self.is_completed
+    
+    def __del__(self):
+        """تنظيف عند حذف الكائن"""
+        if hasattr(self, 'request_id'):
+            with cache_lock:
+                if self.request_id in request_tracking:
+                    del request_tracking[self.request_id]
+
+def generate_request_id(user_id, text):
+    """إنشاء معرف فريد للطلب"""
+    unique_str = f"{user_id}_{text}_{int(time.time() * 1000000)}"
+    return hashlib.md5(unique_str.encode()).hexdigest()[:12]
+
+async def check_duplicate_request(user_id, text):
+    """فحص الطلبات المكررة النشطة"""
+    with cache_lock:
+        search_hash = hashlib.md5(f"{user_id}_{text.lower()}".encode()).hexdigest()
+        
+        for req_id, tracker in request_tracking.items():
+            if (tracker.user_id == user_id and 
+                tracker.is_active() and 
+                time.time() - tracker.start_time < 300):  # 5 دقائق
+                
+                # فحص تشابه النص
+                if search_hash in req_id or tracker.current_stage in ["searching", "downloading"]:
+                    return tracker
+        
+        return None
+
+async def cancel_related_requests(video_id, exclude_request_id=None):
+    """إلغاء جميع الطلبات المتعلقة بنفس الفيديو"""
+    with cache_lock:
+        to_cancel = []
+        
+        for req_id, tracker in request_tracking.items():
+            if (tracker.video_id == video_id and 
+                tracker.is_active() and 
+                req_id != exclude_request_id):
+                to_cancel.append(tracker)
+        
+        for tracker in to_cancel:
+            tracker.cancel("ملف متوفر من طلب آخر")
+        
+        if to_cancel:
+            print(f"🚫 تم إلغاء {len(to_cancel)} طلب متعلق بالفيديو {video_id}")
+
 def check_rate_limit(user_id):
     """فحص حد المعدل للمستخدم"""
     current_time = time.time()
@@ -386,7 +481,7 @@ def check_rate_limit(user_id):
     user_data['count'] += 1
     return True
 
-# دالة التحميل المحسنة والآمنة
+# دالة التحميل المحسنة والآمنة مع تتبع شامل
 async def download_audio(client, message, text):
     user_id = message.from_user.id if message.from_user else 0
     
@@ -396,23 +491,43 @@ async def download_audio(client, message, text):
     
     # فحص الكلمات المحظورة
     if check_forbidden_words(text):
-        return await message.reply_text("❌ لا يمكن تنزيل هذا المحتوى")  
+        return await message.reply_text("❌ لا يمكن تنزيل هذا المحتوى")
+    
+    # فحص الطلبات المكررة النشطة
+    duplicate_tracker = await check_duplicate_request(user_id, text)
+    if duplicate_tracker:
+        return await message.reply_text(f"⏳ طلب مشابه قيد المعالجة ({duplicate_tracker.current_stage}). انتظر قليلاً...")
+    
+    # إنشاء معرف فريد للطلب وبدء التتبع
+    request_id = generate_request_id(user_id, text)
+    tracker = RequestTracker(request_id, user_id)
     
     # استخدام Semaphore لتحديد عدد التحميلات المتزامنة
     async with download_semaphore:
-        status_message = await message.reply_text("🔍 جاري البحث...")
+        status_message = await message.reply_text(f"🔍 جاري البحث... (ID: {request_id[:6]})")
         audio_file = None
         thumbnail_file = None
         cookie_file = None
         
         try:
+            # تحديث مرحلة البحث
+            tracker.update_stage("searching_cache")
+            
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await status_message.delete()
+                return
+            
             # البحث في الكاش أولاً
             cached_result = await get_cached_search(text)
             if cached_result:
                 search_result = cached_result
+                tracker.update_stage("found_in_search_cache")
             else:
                 # البحث الجديد
-                await status_message.edit_text("🔍 البحث في يوتيوب...")
+                tracker.update_stage("searching_youtube")
+                await status_message.edit_text(f"🔍 البحث في يوتيوب... (ID: {request_id[:6]})")
+                
                 search = await asyncio.get_event_loop().run_in_executor(
                     None, lambda: SearchVideos(text, offset=1, mode="dict", max_results=1)
                 )
@@ -420,28 +535,52 @@ async def download_audio(client, message, text):
                     None, search.result
                 )
                 
+                # فحص إلغاء الطلب بعد البحث
+                if not tracker.is_active():
+                    await status_message.delete()
+                    return
+                
                 if not search_result or not search_result.get("search_result") or len(search_result["search_result"]) == 0:
+                    tracker.complete(False, "no_results")
                     await status_message.delete()
                     return await message.reply_text("❌ لم يتم العثور على نتائج للبحث المطلوب")
                 
                 # حفظ في الكاش
                 await cache_search_result(text, search_result)
+                tracker.update_stage("search_completed")
             
             video_data = search_result["search_result"][0]
             video_url = video_data["link"]
             video_title = video_data["title"]
             video_id = video_data["id"]
             
+            # تحديث معرف الفيديو في التتبع
+            tracker.video_id = video_id
+            
+            # إلغاء الطلبات المتعلقة بنفس الفيديو
+            await cancel_related_requests(video_id, exclude_request_id=request_id)
+            
             # فحص إذا كان التحميل جاري بالفعل لمنع التكرار
             is_active = await check_active_download(video_id, user_id)
             if is_active:
+                tracker.complete(False, "duplicate_download")
                 await status_message.delete()
                 return await message.reply_text("⏳ هذا الملف قيد التحميل بالفعل، انتظر قليلاً...")
             
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await status_message.delete()
+                return
+            
             # البحث عن الملف في كاش التحميلات أولاً
+            tracker.update_stage("checking_download_cache")
             cached_download = await get_cached_download(video_id)
             if cached_download:
-                await status_message.edit_text("📁 إرسال الملف من الكاش...")
+                tracker.update_stage("sending_from_cache")
+                await status_message.edit_text(f"📁 إرسال الملف من الكاش... (ID: {request_id[:6]})")
+                
+                # إلغاء جميع الطلبات المتعلقة بنفس الفيديو
+                await cancel_related_requests(video_id, exclude_request_id=request_id)
                 
                 # إرسال الملف المحفوظ مباشرة
                 await client.send_audio(
@@ -456,27 +595,46 @@ async def download_audio(client, message, text):
                 )
                 
                 await status_message.delete()
-                await finish_download_tracking(video_id, user_id)
+                tracker.complete(True, "download_cache")
                 print(f"✅ تم إرسال ملف محفوظ: {video_title} للمستخدم {user_id}")
                 return  # توقف هنا - تم الإرسال من الكاش
             
             # إذا لم يوجد في الكاش، ابدأ التحميل الجديد
-            await status_message.edit_text("📊 فحص معلومات الفيديو...")
+            tracker.update_stage("preparing_download")
+            await status_message.edit_text(f"📊 فحص معلومات الفيديو... (ID: {request_id[:6]})")
+            
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await status_message.delete()
+                return
             
             # الحصول على أفضل ملف كوكيز
             cookie_file = cookie_manager.get_best_cookie(user_id)
             if not cookie_file:
-                await finish_download_tracking(video_id, user_id)
+                tracker.complete(False, "no_cookies")
                 await status_message.delete()
                 return await message.reply_text("❌ لا توجد ملفات كوكيز متاحة")
             
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await status_message.delete()
+                return
+            
             # تحميل الصورة المصغرة بشكل غير متزامن
-            await status_message.edit_text("🖼️ تحميل الصورة المصغرة...")
+            tracker.update_stage("downloading_thumbnail")
+            await status_message.edit_text(f"🖼️ تحميل الصورة المصغرة... (ID: {request_id[:6]})")
             thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
             thumbnail_file = await download_thumbnail_async(thumbnail_url)
             
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await clean_temp_files(thumbnail_file)
+                await status_message.delete()
+                return
+            
             # إعدادات التحميل المحسنة
-            await status_message.edit_text("⬇️ تحميل الملف الصوتي...")
+            tracker.update_stage("downloading_audio")
+            await status_message.edit_text(f"⬇️ تحميل الملف الصوتي... (ID: {request_id[:6]})")
             
             opts = {
                 'format': 'bestaudio[filesize<50M]/bestaudio',  # تحديد حجم أقصى
@@ -504,22 +662,38 @@ async def download_audio(client, message, text):
                 None, download_with_ytdl
             )
             
+            # فحص إلغاء الطلب بعد التحميل
+            if not tracker.is_active():
+                await clean_temp_files(audio_file, thumbnail_file)
+                await status_message.delete()
+                return
+            
+            # إلغاء جميع الطلبات المتعلقة بنفس الفيديو بعد نجاح التحميل
+            await cancel_related_requests(video_id, exclude_request_id=request_id)
+            
             # فحص حجم الملف
             if audio_file and os.path.exists(audio_file):
                 file_size = os.path.getsize(audio_file)
                 if file_size > 50 * 1024 * 1024:  # 50 MB
                     await clean_temp_files(audio_file, thumbnail_file)
-                    await finish_download_tracking(video_id, user_id)
+                    tracker.complete(False, "file_too_large")
                     await status_message.delete()
                     return await message.reply_text("❌ حجم الملف كبير جداً (أكثر من 50 ميجا)")
             
             # إعداد معلومات الملف
+            tracker.update_stage("preparing_send")
             duration = int(ytdl_data.get("duration", 0))
             title = str(ytdl_data.get("title", "Unknown"))[:100]  # تحديد طول العنوان
             performer = str(ytdl_data.get("uploader", "Unknown"))[:50]
             caption = f"🎵 [{title}]({video_url})\n👤 {performer}"
             
-            await status_message.edit_text("📤 إرسال الملف...")
+            await status_message.edit_text(f"📤 إرسال الملف... (ID: {request_id[:6]})")
+            
+            # فحص إلغاء الطلب قبل الإرسال
+            if not tracker.is_active():
+                await clean_temp_files(audio_file, thumbnail_file)
+                await status_message.delete()
+                return
             
             # إرسال الملف الصوتي
             await client.send_audio(
@@ -534,6 +708,7 @@ async def download_audio(client, message, text):
             )
             
             # حفظ الملف في كاش التحميل للاستخدام المستقبلي
+            tracker.update_stage("caching_result")
             metadata = {
                 'duration': duration,
                 'title': title,
@@ -543,7 +718,7 @@ async def download_audio(client, message, text):
             await cache_download_result(video_id, audio_file, thumbnail_file, metadata)
             
             await status_message.delete()
-            await finish_download_tracking(video_id, user_id)
+            tracker.complete(True, "full_download")
             print(f"✅ تم تحميل وحفظ بنجاح: {title} للمستخدم {user_id}")
             
             # لا تحذف الملفات هنا - سيتم حذفها تلقائياً عند تنظيف الكاش
@@ -557,9 +732,8 @@ async def download_audio(client, message, text):
             if cookie_file:
                 cookie_manager.report_cookie_error(cookie_file)
             
-            # إنهاء تتبع التحميل في حالة الخطأ
-            if 'video_id' in locals():
-                await finish_download_tracking(video_id, user_id)
+            # إنهاء تتبع الطلب في حالة الخطأ
+            tracker.complete(False, f"error: {error_msg[:50]}")
             
             try:
                 await status_message.delete()
@@ -581,9 +755,15 @@ async def download_audio(client, message, text):
             await message.reply_text(error_response)
             
         finally:
-            # تنظيف الملفات المؤقتة فقط إذا لم يتم حفظها في الكاش
-            if not ('video_id' in locals() and video_id in download_cache):
+            # تنظيف الملفات المؤقتة فقط إذا لم يتم حفظها في الكاش أو كان الطلب ملغى
+            if (not ('video_id' in locals() and video_id in download_cache) or 
+                not tracker.is_completed or 
+                not tracker.current_stage.startswith("completed")):
                 await clean_temp_files(audio_file, thumbnail_file)
+            
+            # التأكد من تنظيف التتبع
+            if tracker and not tracker.is_completed:
+                tracker.complete(False, "cleanup")
 
 # دالة مساعدة للتحقق من صحة النص المطلوب تحميله
 def validate_search_text(text):
@@ -707,9 +887,16 @@ async def stats_handler(client, message):
         search_cache_size = len(search_cache)
         download_cache_size = len(download_cache)
         active_downloads_count = len(active_downloads)
+        active_requests_count = len(request_tracking)
         
         # إحصائيات Rate Limiting
         active_users = len(user_request_count)
+        
+        # إحصائيات مراحل الطلبات
+        stages_count = {}
+        for tracker in request_tracking.values():
+            stage = tracker.current_stage
+            stages_count[stage] = stages_count.get(stage, 0) + 1
         
         stats_text = f"""
 📊 **إحصائيات البوت:**
@@ -720,9 +907,15 @@ async def stats_handler(client, message):
 👥 **المستخدمين النشطين:** {active_users}
 ⬇️ **التحميلات النشطة:** {MAX_CONCURRENT_DOWNLOADS - download_semaphore._value}
 🔄 **التحميلات قيد المعالجة:** {active_downloads_count}
+📋 **الطلبات المتتبعة:** {active_requests_count}
 
-🔍 **تفاصيل الكوكيز:**
+📈 **مراحل الطلبات النشطة:**
 """
+        
+        for stage, count in stages_count.items():
+            stats_text += f"• {stage}: {count}\n"
+        
+        stats_text += "\n🔍 **تفاصيل الكوكيز:**\n"
         
         for cookie_name, stats in cookie_stats.items():
             stats_text += f"• {cookie_name}: {stats['usage_count']} استخدام، {stats['error_count']} أخطاء\n"
@@ -789,8 +982,42 @@ async def reload_cookies_handler(client, message):
         
         await message.reply_text(f"🔄 تم إعادة تحميل الكوكيز\n🔸 السابق: {old_count}\n🔸 الحالي: {new_count}")
         
+         except Exception as e:
+         print(f"❌ خطأ في إعادة تحميل الكوكيز: {e}")
+
+@Client.on_message(filters.command(["الطلبات", "requests"], ""))
+async def active_requests_handler(client, message):
+    """عرض الطلبات النشطة (للمطورين فقط)"""
+    try:
+        if message.from_user.id not in [6221604842]:  # ضع ID المطورين هنا
+            return
+        
+        with cache_lock:
+            if not request_tracking:
+                return await message.reply_text("لا توجد طلبات نشطة حالياً")
+            
+            requests_text = "📋 **الطلبات النشطة:**\n\n"
+            current_time = time.time()
+            
+            for req_id, tracker in list(request_tracking.items())[:10]:  # أول 10 طلبات
+                elapsed = int(current_time - tracker.start_time)
+                status = "🟢" if tracker.is_active() else "🔴"
+                
+                requests_text += (
+                    f"{status} **ID:** `{req_id}`\n"
+                    f"👤 المستخدم: {tracker.user_id}\n"
+                    f"📹 الفيديو: {tracker.video_id or 'غير محدد'}\n"
+                    f"📊 المرحلة: {tracker.current_stage}\n"
+                    f"⏱️ المدة: {elapsed}ث\n\n"
+                )
+            
+            if len(request_tracking) > 10:
+                requests_text += f"... و {len(request_tracking) - 10} طلب آخر"
+        
+        await message.reply_text(requests_text)
+        
     except Exception as e:
-        print(f"❌ خطأ في إعادة تحميل الكوكيز: {e}")
+        print(f"❌ خطأ في عرض الطلبات: {e}")
 
 # إضافة تنظيف دوري للذاكرة والكاش
 async def periodic_cleanup():
@@ -854,6 +1081,26 @@ async def periodic_cleanup():
                 if expired_active:
                     print(f"🧹 تم تنظيف {len(expired_active)} تحميل نشط منتهي الصلاحية")
             
+            # تنظيف تتبع الطلبات المنتهية الصلاحية
+            with cache_lock:
+                current_time = time.time()
+                expired_requests = [
+                    req_id for req_id, tracker in request_tracking.items()
+                    if current_time - tracker.start_time > 1800  # 30 دقيقة
+                ]
+                
+                for req_id in expired_requests:
+                    try:
+                        tracker = request_tracking[req_id]
+                        if not tracker.is_completed:
+                            tracker.complete(False, "expired")
+                        del request_tracking[req_id]
+                    except Exception as e:
+                        print(f"خطأ في تنظيف تتبع الطلب {req_id}: {e}")
+                
+                if expired_requests:
+                    print(f"🧹 تم تنظيف {len(expired_requests)} طلب منتهي الصلاحية")
+            
             # تنظيف إحصائيات المستخدمين القديمة
             current_time = time.time()
             old_users = [
@@ -885,7 +1132,9 @@ print(f"   ⬇️ الحد الأقصى للتحميلات المتزامنة: {
 print(f"   🔍 الحد الأقصى لكاش البحث: {MAX_CACHE_SIZE}")
 print(f"   💾 الحد الأقصى لكاش التحميل: {DOWNLOAD_CACHE_SIZE}")
 print(f"   ⏱️ معدل الطلبات: 5 طلبات/دقيقة لكل مستخدم")
-print(f"   🔐 نظام منع التكرار: مفعل")
+print(f"   🔐 نظام منع التكرار المتقدم: مفعل")
+print(f"   📋 تتبع الطلبات الذكي: مفعل")
 print(f"   📁 نظام الكاش المتقدم: مفعل")
+print(f"   🚫 إلغاء الطلبات المتداخلة: مفعل")
 print(f"   🔄 التنظيف التلقائي: كل ساعة")
 print("=" * 50)
