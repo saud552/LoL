@@ -143,6 +143,31 @@ def register_bot_instances(bot_username, userbot_instance, call_instance=None):
         print(f"❌ فشل في تسجيل كائنات البوت {bot_username}: {e}")
         return False
 
+async def Call(bot_username, message):
+    """تهيئة وتسجيل البوت الموسيقي الجديد"""
+    try:
+        # الحصول على كائنات البوت من config
+        from config import appp, user
+        
+        if bot_username in appp and bot_username in user:
+            bot = appp[bot_username]
+            userbot = user[bot_username]
+            
+            # تسجيل كائنات البوت في نظام التشغيل
+            result = register_bot_instances(bot_username, userbot)
+            
+            if result:
+                await initialize_play_system()
+                print(f"✅ تم تهيئة نظام التشغيل للبوت: {bot_username}")
+            else:
+                print(f"❌ فشل في تهيئة نظام التشغيل للبوت: {bot_username}")
+                
+        else:
+            print(f"⚠️ كائنات البوت غير موجودة: {bot_username}")
+            
+    except Exception as e:
+        print(f"❌ خطأ في دالة Call للبوت {bot_username}: {e}")
+
 async def join_assistant(client, hoss_chat_user, user):
     """انضمام المساعد للمكالمة"""
     join = None
