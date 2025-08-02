@@ -58,8 +58,8 @@ class AdvancedCookieManager:
         self.cookie_errors = defaultdict(int)  # عدد الأخطاء لكل كوكيز
         self.lock = threading.RLock()  # قفل للحماية من race conditions
         self.load_cookies_files()
-        self.max_cookie_usage = 100  # حد أقصى لاستخدام الكوكيز قبل التبديل
-        self.cookie_cooldown = 30  # فترة انتظار بالثواني قبل إعادة استخدام نفس الكوكيز
+        self.max_cookie_usage = 10000  # تم رفع الحد إلى 10000 استخدام
+        self.cookie_cooldown = 1  # تم تقليل فترة الانتظار إلى ثانية واحدة
         
     def load_cookies_files(self):
         """تحميل قائمة ملفات الكوكيز المتاحة مع فحص صحتها"""
@@ -133,9 +133,7 @@ class AdvancedCookieManager:
             
             # فحص الكوكيز المتاحة
             for cookie_file in self.cookies_files:
-                # تجاهل الكوكيز التي لديها أخطاء كثيرة
-                if self.cookie_errors[cookie_file] > 10:
-                    continue
+                # تم إلغاء حد الأخطاء - استخدام جميع الكوكيز مهما كانت الأخطاء
                 
                 # تجاهل الكوكيز التي استُخدمت مؤخراً
                 if current_time - self.cookie_last_used[cookie_file] < self.cookie_cooldown:
@@ -206,7 +204,7 @@ class AdvancedCookieManager:
 cookie_manager = AdvancedCookieManager()
 
 # إعدادات النظام العامة
-MAX_CONCURRENT_DOWNLOADS = 50  # حد أقصى للتحميلات المتزامنة
+MAX_CONCURRENT_DOWNLOADS = 10000  # تم رفع الحد إلى 10000 (عملياً لا محدود)
 download_semaphore = asyncio.Semaphore(MAX_CONCURRENT_DOWNLOADS)
 user_request_count = defaultdict(lambda: {'count': 0, 'last_reset': time.time()})
 search_cache = {}  # كاش للبحثات
@@ -214,8 +212,8 @@ download_cache = {}  # كاش للملفات المحملة
 active_downloads = {}  # تتبع التحميلات النشطة لمنع التكرار
 request_tracking = {}  # تتبع شامل للطلبات مع إمكانية الإلغاء
 cache_lock = threading.RLock()
-MAX_CACHE_SIZE = 1000  # حد أقصى لحجم الكاش
-DOWNLOAD_CACHE_SIZE = 200  # حد أقصى للملفات المحملة في الكاش
+MAX_CACHE_SIZE = 10000  # تم رفع الحد إلى 10000 عنصر
+DOWNLOAD_CACHE_SIZE = 5000  # تم رفع الحد إلى 5000 ملف
 
 def check_forbidden_words(text):
     """فحص النص للكلمات المحظورة - محسن للأداء"""
@@ -493,9 +491,7 @@ def check_rate_limit(user_id):
 async def download_audio(client, message, text):
     user_id = message.from_user.id if message.from_user else 0
     
-    # فحص حد المعدل للمستخدم
-    if not check_rate_limit(user_id):
-        return await message.reply_text("⏳ تم تجاوز الحد المسموح من الطلبات. حاول مرة أخرى بعد دقيقة.")
+    # تم إلغاء فحص حد المعدل للمستخدم - استخدام حر بلا قيود
     
     # فحص الكلمات المحظورة
     if check_forbidden_words(text):
@@ -510,12 +506,11 @@ async def download_audio(client, message, text):
     request_id = generate_request_id(user_id, text)
     tracker = RequestTracker(request_id, user_id)
     
-    # استخدام Semaphore لتحديد عدد التحميلات المتزامنة
-    async with download_semaphore:
-        status_message = await message.reply_text(f"🔍 جاري البحث... (ID: {request_id[:6]})")
-        audio_file = None
-        thumbnail_file = None
-        cookie_file = None
+    # تم إلغاء حد التحميلات المتزامنة - تحميل حر بلا قيود
+    status_message = await message.reply_text(f"🔍 جاري البحث... (ID: {request_id[:6]})")
+    audio_file = None
+    thumbnail_file = None
+    cookie_file = None
         
         try:
             # تحديث مرحلة البحث
@@ -645,7 +640,7 @@ async def download_audio(client, message, text):
             await status_message.edit_text(f"⬇️ تحميل الملف الصوتي... (ID: {request_id[:6]})")
             
             opts = {
-                'format': 'bestaudio[filesize<50M]/bestaudio',  # تحديد حجم أقصى
+                'format': 'bestaudio/best',  # تم إلغاء حد الحجم - تحميل بأي حجم
                 'outtmpl': f'audio_{int(time.time() * 1000000)}_{video_id}_%(title)s.%(ext)s',
                 'cookiefile': cookie_file,
                 'quiet': True,
@@ -656,7 +651,7 @@ async def download_audio(client, message, text):
                 'ignoreerrors': True,
                 'retries': 3,
                 'fragment_retries': 3,
-                'socket_timeout': 30,
+                'socket_timeout': 300,  # تم رفع timeout إلى 5 دقائق
             }
             
             # تحميل الملف في thread منفصل لعدم حجب البوت
@@ -679,14 +674,7 @@ async def download_audio(client, message, text):
             # إلغاء جميع الطلبات المتعلقة بنفس الفيديو بعد نجاح التحميل
             await cancel_related_requests(video_id, exclude_request_id=request_id)
             
-            # فحص حجم الملف
-            if audio_file and os.path.exists(audio_file):
-                file_size = os.path.getsize(audio_file)
-                if file_size > 50 * 1024 * 1024:  # 50 MB
-                    await clean_temp_files(audio_file, thumbnail_file)
-                    tracker.complete(False, "file_too_large")
-                    await status_message.delete()
-                    return await message.reply_text("❌ حجم الملف كبير جداً (أكثر من 50 ميجا)")
+            # تم إلغاء فحص حجم الملف - قبول أي حجم
             
             # إعداد معلومات الملف
             tracker.update_stage("preparing_send")
@@ -796,16 +784,12 @@ async def download_audio(client, message, text):
 
 # دالة مساعدة للتحقق من صحة النص المطلوب تحميله
 def validate_search_text(text):
-    """التحقق من صحة النص المطلوب للبحث"""
-    if not text or len(text.strip()) < 2:
-        return False, "النص قصير جداً"
+    """التحقق من صحة النص المطلوب للبحث - تم تخفيف القيود"""
+    if not text or len(text.strip()) < 1:
+        return False, "النص فارغ"
     
-    if len(text) > 200:
-        return False, "النص طويل جداً (أكثر من 200 حرف)"
-    
-    # فحص الأحرف المسموحة
-    if not any(c.isalnum() or c.isspace() for c in text):
-        return False, "النص يحتوي على أحرف غير صالحة"
+    # تم إلغاء حد طول النص - قبول أي طول
+    # تم إلغاء فحص الأحرف - قبول أي نوع أحرف
     
     return True, "صالح"
 
@@ -880,13 +864,8 @@ async def command_download_handler(client, message):
 async def text_download_handler(client, message):
     """معالج الأوامر النصية بدون /"""
     try:
-        # تجاهل الرسائل الطويلة جداً لتوفير الموارد
-        if len(message.text) > 300:
-            return
-        
-        # تجاهل الرسائل التي تحتوي على روابط أو mentions
-        if any(x in message.text.lower() for x in ['http', 'www.', '@', '#']):
-            return
+        # تم إلغاء حد طول الرسائل - قبول أي طول
+        # تم إلغاء تجاهل الروابط - قبول جميع أنواع النصوص
         
         commands = ["تحميل", "نزل", "تنزيل", "يوتيوب", "حمل", "تنزل", "يوت", "بحث"]
         text = message.text.strip()
@@ -1189,13 +1168,16 @@ start_periodic_cleanup()
 print("🚀 تم تحميل مدير تحميل يوتيوب المطور بنجاح!")
 print(f"📊 الإعدادات الحالية:")
 print(f"   🍪 ملفات الكوكيز: {len(cookie_manager.cookies_files)}")
-print(f"   ⬇️ الحد الأقصى للتحميلات المتزامنة: {MAX_CONCURRENT_DOWNLOADS}")
-print(f"   🔍 الحد الأقصى لكاش البحث: {MAX_CACHE_SIZE}")
-print(f"   💾 الحد الأقصى لكاش التحميل: {DOWNLOAD_CACHE_SIZE}")
-print(f"   ⏱️ معدل الطلبات: 5 طلبات/دقيقة لكل مستخدم")
+print(f"   ⬇️ التحميلات المتزامنة: {MAX_CONCURRENT_DOWNLOADS} (لا محدود عملياً)")
+print(f"   🔍 كاش البحث: {MAX_CACHE_SIZE} عنصر")
+print(f"   💾 كاش التحميل: {DOWNLOAD_CACHE_SIZE} ملف") 
+print(f"   ⏱️ معدل الطلبات: بلا حدود")
+print(f"   📏 حجم الملفات: بلا حدود")
+print(f"   📝 طول النصوص: بلا حدود")
 print(f"   🔐 نظام منع التكرار المتقدم: مفعل")
 print(f"   📋 تتبع الطلبات الذكي: مفعل")
 print(f"   📁 نظام الكاش المتقدم: مفعل")
 print(f"   🚫 إلغاء الطلبات المتداخلة: مفعل")
 print(f"   🔄 التنظيف التلقائي: كل ساعة")
+print(f"   🚀 وضع الأداء العالي: مفعل (بلا قيود)")
 print("=" * 50)
