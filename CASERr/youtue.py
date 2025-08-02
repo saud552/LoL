@@ -5,7 +5,6 @@ import aiohttp
 import requests
 import random 
 import asyncio
-import yt_dlp
 import time 
 import hashlib
 import threading
