@@ -103,7 +103,7 @@ def check_duplicate_request(user_id, text):
                 tracker.search_text == search_hash and
                 not tracker.is_completed and
                 not tracker.is_cancelled and
-                current_time - tracker.start_time < 300):  # 5 دقائق
+                current_time - tracker.start_time < 180):  # 3 دقائق
                 return tracker
         
         return None
@@ -403,10 +403,37 @@ async def download_audio(client, message, text):
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         }
         
-        # التحميل
-        with YoutubeDL(opts) as ytdl:
-            ytdl_data = ytdl.extract_info(mo, download=True)
-            audio_file = ytdl.prepare_filename(ytdl_data)
+                 # التحميل مع retry ذكي
+         max_retries = min(len(cookie_manager.cookies_files), 3)  # جرب حتى 3 كوكيز مختلفة
+         
+         for retry_attempt in range(max_retries):
+             try:
+                 if retry_attempt > 0:
+                     # جرب كوكيز مختلف في المحاولات التالية
+                     cookie_file = cookie_manager.get_best_cookie(user_id + retry_attempt)
+                     opts['cookiefile'] = cookie_file
+                     print(f"🔄 محاولة {retry_attempt + 1} مع كوكيز جديد")
+                 
+                 with YoutubeDL(opts) as ytdl:
+                     ytdl_data = ytdl.extract_info(mo, download=True)
+                     audio_file = ytdl.prepare_filename(ytdl_data)
+                 
+                 # إذا نجح التحميل، اخرج من حلقة الـ retry
+                 break
+                 
+             except Exception as retry_error:
+                 print(f"❌ فشلت محاولة {retry_attempt + 1}: {retry_error}")
+                 
+                 # تسجيل خطأ الكوكيز
+                 if cookie_file:
+                     cookie_manager.report_error(cookie_file)
+                 
+                 # إذا كانت المحاولة الأخيرة، ارفع الخطأ
+                 if retry_attempt == max_retries - 1:
+                     raise retry_error
+                 
+                 # انتظار قصير بين المحاولات
+                 await asyncio.sleep(1)
         
         # إلغاء الطلبات المتعلقة بنفس الفيديو بعد نجاح التحميل
         cancel_related_requests(fridayz, exclude_request_id=request_id)
@@ -468,7 +495,9 @@ async def download_audio(client, message, text):
         # تنظيف الملفات في حالة الخطأ
         clean_temp_files(audio_file, sedlyf)
         
-        # رسائل خطأ محسنة
+        # رسائل خطأ محسنة مع تفاصيل أكثر للتشخيص
+        print(f"🔍 تفاصيل الخطأ للمطورين: {error_msg}")
+        
         if "Sign in to confirm your age" in error_msg or "confirm you're not a bot" in error_msg:
             error_response = "❌ هذا الفيديو يتطلب تأكيد إضافي من YouTube"
         elif "Video unavailable" in error_msg:
@@ -477,8 +506,13 @@ async def download_audio(client, message, text):
             error_response = "❌ هذا فيديو خاص"
         elif "blocked" in error_msg.lower():
             error_response = "❌ هذا الفيديو محجوب في منطقتك"
+        elif "HTTP Error 403" in error_msg:
+            error_response = "❌ تم رفض الوصول - قد يكون هناك مشكلة في الكوكيز"
+        elif "HTTP Error 429" in error_msg:
+            error_response = "❌ تم تجاوز حد الطلبات - جرب لاحقاً"
         else:
-            error_response = "❌ حدث خطأ أثناء التحميل، حاول مرة أخرى"
+            # إضافة تفاصيل للمطورين في رسالة الخطأ
+            error_response = f"❌ خطأ في التحميل: {error_msg[:100]}"
         
         await message.reply_text(error_response)
 
