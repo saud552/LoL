@@ -19,7 +19,6 @@ from CASERr.CASERr import get_channel, johned
 import aiohttp
 import aiofiles
 from pyrogram.types import *
-from config import YOUTUBE_COOKIES_FILE
 import hashlib
 import weakref
 
@@ -76,11 +75,16 @@ class AdvancedCookieManager:
                             if self._validate_cookie_file(file_path):
                                 self.cookies_files.append(file_path)
                     
-                    # إضافة الملف الافتراضي إذا كان موجوداً
+                                    # إضافة الملف الافتراضي إذا كان موجوداً
+                try:
+                    from config import YOUTUBE_COOKIES_FILE
                     if YOUTUBE_COOKIES_FILE and os.path.exists(YOUTUBE_COOKIES_FILE):
                         if YOUTUBE_COOKIES_FILE not in self.cookies_files:
                             if self._validate_cookie_file(YOUTUBE_COOKIES_FILE):
                                 self.cookies_files.append(YOUTUBE_COOKIES_FILE)
+                except ImportError:
+                    # لا يوجد ملف كوكيز افتراضي في الإعدادات
+                    pass
                 
                 # ترتيب الملفات حسب الحجم (الأكبر أولاً - عادة أكثر صحة)
                 self.cookies_files.sort(key=lambda x: os.path.getsize(x), reverse=True)
@@ -90,8 +94,12 @@ class AdvancedCookieManager:
             except Exception as e:
                 print(f"❌ خطأ في تحميل ملفات الكوكيز: {e}")
                 # استخدام الملف الافتراضي كاحتياطي
-                if YOUTUBE_COOKIES_FILE and os.path.exists(YOUTUBE_COOKIES_FILE):
-                    self.cookies_files = [YOUTUBE_COOKIES_FILE]
+                try:
+                    from config import YOUTUBE_COOKIES_FILE
+                    if YOUTUBE_COOKIES_FILE and os.path.exists(YOUTUBE_COOKIES_FILE):
+                        self.cookies_files = [YOUTUBE_COOKIES_FILE]
+                except ImportError:
+                    print("⚠️ لا توجد ملفات كوكيز متاحة")
     
     def _validate_cookie_file(self, file_path):
         """فحص صحة ملف الكوكيز"""
@@ -756,14 +764,35 @@ async def download_audio(client, message, text):
             
         finally:
             # تنظيف الملفات المؤقتة فقط إذا لم يتم حفظها في الكاش أو كان الطلب ملغى
-            if (not ('video_id' in locals() and video_id in download_cache) or 
-                not tracker.is_completed or 
-                not tracker.current_stage.startswith("completed")):
-                await clean_temp_files(audio_file, thumbnail_file)
+            should_clean = True
+            
+            try:
+                # فحص إذا تم حفظ الملف في الكاش
+                if 'video_id' in locals() and video_id and video_id in download_cache:
+                    should_clean = False
+                elif tracker and tracker.is_completed and tracker.current_stage.startswith("completed"):
+                    should_clean = False
+                
+                if should_clean:
+                    # تنظيف آمن للملفات المؤقتة
+                    files_to_clean = []
+                    if 'audio_file' in locals() and audio_file:
+                        files_to_clean.append(audio_file)
+                    if 'thumbnail_file' in locals() and thumbnail_file:
+                        files_to_clean.append(thumbnail_file)
+                    
+                    if files_to_clean:
+                        await clean_temp_files(*files_to_clean)
+                
+            except Exception as cleanup_error:
+                print(f"❌ خطأ في تنظيف الملفات: {cleanup_error}")
             
             # التأكد من تنظيف التتبع
-            if tracker and not tracker.is_completed:
-                tracker.complete(False, "cleanup")
+            try:
+                if 'tracker' in locals() and tracker and not tracker.is_completed:
+                    tracker.complete(False, "cleanup")
+            except Exception as tracker_error:
+                print(f"❌ خطأ في تنظيف التتبع: {tracker_error}")
 
 # دالة مساعدة للتحقق من صحة النص المطلوب تحميله
 def validate_search_text(text):
@@ -779,6 +808,15 @@ def validate_search_text(text):
         return False, "النص يحتوي على أحرف غير صالحة"
     
     return True, "صالح"
+
+# تشغيل التنظيف الدوري عند بدء البوت
+async def initialize_cleanup_task():
+    """تشغيل مهمة التنظيف الدوري"""
+    try:
+        asyncio.create_task(periodic_cleanup())
+        print("✅ تم تشغيل التنظيف الدوري بنجاح")
+    except Exception as e:
+        print(f"❌ خطأ في تشغيل التنظيف الدوري: {e}")
 
 # معالج الأوامر المحسن
 async def handle_download_command(client, message, search_text):
@@ -803,10 +841,20 @@ async def handle_download_command(client, message, search_text):
         print(f"❌ خطأ في معالج الأوامر: {e}")
         await message.reply_text("❌ حدث خطأ في معالجة الطلب")
 
+# متغير لتتبع تشغيل التنظيف الدوري
+cleanup_initialized = False
+
 # الأوامر مع / - محسنة
 @Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)
 async def command_download_handler(client, message):
     """معالج الأوامر مع العلامة /"""
+    global cleanup_initialized
+    
+    # تشغيل التنظيف الدوري مرة واحدة
+    if not cleanup_initialized:
+        await initialize_cleanup_task()
+        cleanup_initialized = True
+    
     try:
         # استخراج النص من الأمر
         command_parts = message.text.split(" ", 1)
@@ -982,8 +1030,8 @@ async def reload_cookies_handler(client, message):
         
         await message.reply_text(f"🔄 تم إعادة تحميل الكوكيز\n🔸 السابق: {old_count}\n🔸 الحالي: {new_count}")
         
-         except Exception as e:
-         print(f"❌ خطأ في إعادة تحميل الكوكيز: {e}")
+    except Exception as e:
+        print(f"❌ خطأ في إعادة تحميل الكوكيز: {e}")
 
 @Client.on_message(filters.command(["الطلبات", "requests"], ""))
 async def active_requests_handler(client, message):
@@ -1122,8 +1170,21 @@ async def periodic_cleanup():
         except Exception as e:
             print(f"❌ خطأ في التنظيف الدوري: {e}")
 
-# بدء التنظيف الدوري عند تشغيل البوت
-asyncio.create_task(periodic_cleanup())
+# دالة لتشغيل التنظيف الدوري
+def start_periodic_cleanup():
+    """تشغيل التنظيف الدوري في event loop"""
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            loop.create_task(periodic_cleanup())
+        else:
+            asyncio.create_task(periodic_cleanup())
+    except RuntimeError:
+        # سيتم تشغيله لاحقاً عند بدء البوت
+        print("⏳ سيتم تشغيل التنظيف الدوري عند بدء البوت")
+
+# محاولة تشغيل التنظيف الدوري
+start_periodic_cleanup()
 
 print("🚀 تم تحميل مدير تحميل يوتيوب المطور بنجاح!")
 print(f"📊 الإعدادات الحالية:")
