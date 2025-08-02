@@ -481,43 +481,17 @@ def get_channel(bot_username):
 async def johned(client, message):
    try:
        bot_username = client.me.username
-       channels = get_channel(bot_username)
-       
-       # إذا لم توجد قنوات، لا نفرض الاشتراك
-       if not channels:
-           return False
-           
-       for x in channels:
+       for x in get_channel(bot_username):
+           ch = x[0]
+           keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(" اضغط هنا للاشتراك بالقناة 🚦", url=f"https://t.me/{ch}")]])
            try:
-               ch = x[0] if isinstance(x, (list, tuple)) else str(x)
-               if not ch:
-                   continue
-                   
-               keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(" اضغط هنا للاشتراك بالقناة 🚦", url=f"https://t.me/{ch}")]])
-               
-               # فحص العضوية مع معالجة شاملة للأخطاء
-               try:
-                   get = await client.get_chat_member(ch, message.from_user.id)
-                   # إذا وصلنا هنا، المستخدم مشترك في هذه القناة
-               except Exception as member_error:
-                   # المستخدم غير مشترك أو خطأ في الوصول للقناة
-                   try:
-                       await message.reply_text(
-                           f"🚦عذرا عزيزي {message.from_user.mention} يجب عليك الاشترك في القناة اولا..\n\n    قنـاة الـبـوت :\n ⤹ https://t.me/{ch} ⤸", 
-                           disable_web_page_preview=True, 
-                           reply_markup=keyboard
-                       )
-                   except:
-                       pass  # تجاهل أخطاء الإرسال
-                   return True  # المستخدم غير مشترك
-           except Exception as channel_error:
-               print(f"خطأ في فحص القناة {x}: {channel_error}")
-               continue  # تجاهل هذه القناة والمتابعة
-               
-       return False  # المستخدم مشترك في جميع القنوات
-   except Exception as e:
-       print(f"خطأ في دالة johned: {e}")
-       return False  # في حالة أي خطأ، السماح بالاستخدام
+               get = await client.get_chat_member(ch, message.from_user.id)
+           except Exception as e:    	
+               await message.reply_text(f"🚦عذرا عزيزي {message.from_user.mention} يجب عليك الاشترك في القناة اولا..\n\n    قنـاة الـبـوت :\n ⤹ https://t.me/{ch} ⤸", disable_web_page_preview=True, reply_markup=keyboard)
+               return True
+       return False
+   except:
+       return False
 
 @Client.on_message(filters.command(["تفعيل الاشتراك"], "") & filters.group, group=7530844)
 async def retthd(client: Client, message: Message):
