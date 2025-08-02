@@ -202,8 +202,11 @@ MAX_CONCURRENT_DOWNLOADS = 50  # حد أقصى للتحميلات المتزام
 download_semaphore = asyncio.Semaphore(MAX_CONCURRENT_DOWNLOADS)
 user_request_count = defaultdict(lambda: {'count': 0, 'last_reset': time.time()})
 search_cache = {}  # كاش للبحثات
+download_cache = {}  # كاش للملفات المحملة
+active_downloads = {}  # تتبع التحميلات النشطة لمنع التكرار
 cache_lock = threading.RLock()
 MAX_CACHE_SIZE = 1000  # حد أقصى لحجم الكاش
+DOWNLOAD_CACHE_SIZE = 200  # حد أقصى للملفات المحملة في الكاش
 
 def check_forbidden_words(text):
     """فحص النص للكلمات المحظورة - محسن للأداء"""
@@ -292,6 +295,80 @@ async def cache_search_result(text, result):
             'timestamp': time.time()
         }
 
+async def get_cached_download(video_id):
+    """البحث عن ملف محمل في الكاش"""
+    with cache_lock:
+        if video_id in download_cache:
+            cached_download = download_cache[video_id]
+            # فحص انتهاء صلاحية الكاش (2 ساعة للملفات)
+            if time.time() - cached_download['timestamp'] < 7200:
+                # فحص وجود الملف فعلياً
+                if os.path.exists(cached_download['audio_path']):
+                    print(f"📁 استخدام ملف محمل مسبقاً: {video_id}")
+                    return cached_download
+                else:
+                    # إزالة الملف المفقود من الكاش
+                    del download_cache[video_id]
+        return None
+
+async def cache_download_result(video_id, audio_path, thumbnail_path, metadata):
+    """حفظ الملف المحمل في الكاش"""
+    with cache_lock:
+        # تنظيف كاش التحميل إذا امتلأ
+        if len(download_cache) >= DOWNLOAD_CACHE_SIZE:
+            # إزالة أقدم 50 عنصر وحذف ملفاتهم
+            oldest_items = sorted(download_cache.items(), 
+                                key=lambda x: x[1]['timestamp'])[:50]
+            
+            for vid_id, data in oldest_items:
+                try:
+                    # حذف الملفات القديمة
+                    if os.path.exists(data['audio_path']):
+                        await asyncio.get_event_loop().run_in_executor(
+                            None, os.remove, data['audio_path']
+                        )
+                    if data.get('thumbnail_path') and os.path.exists(data['thumbnail_path']):
+                        await asyncio.get_event_loop().run_in_executor(
+                            None, os.remove, data['thumbnail_path']
+                        )
+                except Exception as e:
+                    print(f"خطأ في حذف الملف القديم: {e}")
+                
+                del download_cache[vid_id]
+        
+        # حفظ الملف الجديد في الكاش
+        download_cache[video_id] = {
+            'audio_path': audio_path,
+            'thumbnail_path': thumbnail_path,
+            'metadata': metadata,
+            'timestamp': time.time()
+        }
+        print(f"💾 تم حفظ الملف في الكاش: {video_id}")
+
+async def check_active_download(video_id, user_id):
+    """فحص إذا كان التحميل جاري بالفعل ومنع التكرار"""
+    with cache_lock:
+        download_key = f"{video_id}_{user_id}"
+        
+        if download_key in active_downloads:
+            # فحص إذا كان التحميل ما زال نشطاً (أقل من 10 دقائق)
+            if time.time() - active_downloads[download_key] < 600:
+                return True  # تحميل نشط
+            else:
+                # إزالة التحميل المنتهي الصلاحية
+                del active_downloads[download_key]
+        
+        # تسجيل تحميل جديد
+        active_downloads[download_key] = time.time()
+        return False  # تحميل جديد
+
+async def finish_download_tracking(video_id, user_id):
+    """إنهاء تتبع التحميل"""
+    with cache_lock:
+        download_key = f"{video_id}_{user_id}"
+        if download_key in active_downloads:
+            del active_downloads[download_key]
+
 def check_rate_limit(user_id):
     """فحص حد المعدل للمستخدم"""
     current_time = time.time()
@@ -355,12 +432,41 @@ async def download_audio(client, message, text):
             video_title = video_data["title"]
             video_id = video_data["id"]
             
-            # فحص مدة الفيديو لتجنب الملفات الطويلة جداً
+            # فحص إذا كان التحميل جاري بالفعل لمنع التكرار
+            is_active = await check_active_download(video_id, user_id)
+            if is_active:
+                await status_message.delete()
+                return await message.reply_text("⏳ هذا الملف قيد التحميل بالفعل، انتظر قليلاً...")
+            
+            # البحث عن الملف في كاش التحميلات أولاً
+            cached_download = await get_cached_download(video_id)
+            if cached_download:
+                await status_message.edit_text("📁 إرسال الملف من الكاش...")
+                
+                # إرسال الملف المحفوظ مباشرة
+                await client.send_audio(
+                    chat_id=message.chat.id,
+                    audio=cached_download['audio_path'],
+                    duration=cached_download['metadata']['duration'],
+                    title=cached_download['metadata']['title'],
+                    performer=cached_download['metadata']['performer'],
+                    thumb=cached_download['thumbnail_path'],
+                    caption=cached_download['metadata']['caption'],
+                    reply_to_message_id=message.id
+                )
+                
+                await status_message.delete()
+                await finish_download_tracking(video_id, user_id)
+                print(f"✅ تم إرسال ملف محفوظ: {video_title} للمستخدم {user_id}")
+                return  # توقف هنا - تم الإرسال من الكاش
+            
+            # إذا لم يوجد في الكاش، ابدأ التحميل الجديد
             await status_message.edit_text("📊 فحص معلومات الفيديو...")
             
             # الحصول على أفضل ملف كوكيز
             cookie_file = cookie_manager.get_best_cookie(user_id)
             if not cookie_file:
+                await finish_download_tracking(video_id, user_id)
                 await status_message.delete()
                 return await message.reply_text("❌ لا توجد ملفات كوكيز متاحة")
             
@@ -374,7 +480,7 @@ async def download_audio(client, message, text):
             
             opts = {
                 'format': 'bestaudio[filesize<50M]/bestaudio',  # تحديد حجم أقصى
-                'outtmpl': f'audio_{int(time.time() * 1000000)}_%(title)s.%(ext)s',
+                'outtmpl': f'audio_{int(time.time() * 1000000)}_{video_id}_%(title)s.%(ext)s',
                 'cookiefile': cookie_file,
                 'quiet': True,
                 'no_warnings': True,
@@ -403,6 +509,7 @@ async def download_audio(client, message, text):
                 file_size = os.path.getsize(audio_file)
                 if file_size > 50 * 1024 * 1024:  # 50 MB
                     await clean_temp_files(audio_file, thumbnail_file)
+                    await finish_download_tracking(video_id, user_id)
                     await status_message.delete()
                     return await message.reply_text("❌ حجم الملف كبير جداً (أكثر من 50 ميجا)")
             
@@ -426,8 +533,21 @@ async def download_audio(client, message, text):
                 reply_to_message_id=message.id
             )
             
+            # حفظ الملف في كاش التحميل للاستخدام المستقبلي
+            metadata = {
+                'duration': duration,
+                'title': title,
+                'performer': performer,
+                'caption': caption
+            }
+            await cache_download_result(video_id, audio_file, thumbnail_file, metadata)
+            
             await status_message.delete()
-            print(f"✅ تم تحميل بنجاح: {title} للمستخدم {user_id}")
+            await finish_download_tracking(video_id, user_id)
+            print(f"✅ تم تحميل وحفظ بنجاح: {title} للمستخدم {user_id}")
+            
+            # لا تحذف الملفات هنا - سيتم حذفها تلقائياً عند تنظيف الكاش
+            return
             
         except Exception as e:
             error_msg = str(e)
@@ -436,6 +556,10 @@ async def download_audio(client, message, text):
             # تسجيل خطأ الكوكيز
             if cookie_file:
                 cookie_manager.report_cookie_error(cookie_file)
+            
+            # إنهاء تتبع التحميل في حالة الخطأ
+            if 'video_id' in locals():
+                await finish_download_tracking(video_id, user_id)
             
             try:
                 await status_message.delete()
@@ -457,8 +581,9 @@ async def download_audio(client, message, text):
             await message.reply_text(error_response)
             
         finally:
-            # تنظيف الملفات المؤقتة
-            await clean_temp_files(audio_file, thumbnail_file)
+            # تنظيف الملفات المؤقتة فقط إذا لم يتم حفظها في الكاش
+            if not ('video_id' in locals() and video_id in download_cache):
+                await clean_temp_files(audio_file, thumbnail_file)
 
 # دالة مساعدة للتحقق من صحة النص المطلوب تحميله
 def validate_search_text(text):
@@ -579,7 +704,9 @@ async def stats_handler(client, message):
         cookie_stats = cookie_manager.get_cookie_stats()
         
         # إحصائيات الكاش
-        cache_size = len(search_cache)
+        search_cache_size = len(search_cache)
+        download_cache_size = len(download_cache)
+        active_downloads_count = len(active_downloads)
         
         # إحصائيات Rate Limiting
         active_users = len(user_request_count)
@@ -588,9 +715,11 @@ async def stats_handler(client, message):
 📊 **إحصائيات البوت:**
 
 🍪 **ملفات الكوكيز:** {len(cookie_manager.cookies_files)}
-📋 **حجم الكاش:** {cache_size}/{MAX_CACHE_SIZE}
+🔍 **كاش البحث:** {search_cache_size}/{MAX_CACHE_SIZE}
+💾 **كاش التحميل:** {download_cache_size}/{DOWNLOAD_CACHE_SIZE}
 👥 **المستخدمين النشطين:** {active_users}
 ⬇️ **التحميلات النشطة:** {MAX_CONCURRENT_DOWNLOADS - download_semaphore._value}
+🔄 **التحميلات قيد المعالجة:** {active_downloads_count}
 
 🔍 **تفاصيل الكوكيز:**
 """
@@ -612,10 +741,37 @@ async def clear_cache_handler(client, message):
             return
         
         with cache_lock:
-            old_size = len(search_cache)
+            # تنظيف كاش البحث
+            search_old_size = len(search_cache)
             search_cache.clear()
+            
+            # تنظيف كاش التحميل وحذف الملفات
+            download_old_size = len(download_cache)
+            for vid_id, data in download_cache.items():
+                try:
+                    if os.path.exists(data['audio_path']):
+                        await asyncio.get_event_loop().run_in_executor(
+                            None, os.remove, data['audio_path']
+                        )
+                    if data.get('thumbnail_path') and os.path.exists(data['thumbnail_path']):
+                        await asyncio.get_event_loop().run_in_executor(
+                            None, os.remove, data['thumbnail_path']
+                        )
+                except Exception as e:
+                    print(f"خطأ في حذف ملف {vid_id}: {e}")
+            
+            download_cache.clear()
+            
+            # تنظيف التحميلات النشطة
+            active_old_size = len(active_downloads)
+            active_downloads.clear()
         
-        await message.reply_text(f"✅ تم تنظيف الكاش ({old_size} عنصر محذوف)")
+        result_text = f"""✅ تم تنظيف الكاش بالكامل:
+🔍 كاش البحث: {search_old_size} عنصر
+💾 كاش التحميل: {download_old_size} ملف
+🔄 التحميلات النشطة: {active_old_size} عملية"""
+        
+        await message.reply_text(result_text)
         
     except Exception as e:
         print(f"❌ خطأ في تنظيف الكاش: {e}")
@@ -643,7 +799,7 @@ async def periodic_cleanup():
         try:
             await asyncio.sleep(3600)  # ساعة واحدة
             
-            # تنظيف الكاش من العناصر منتهية الصلاحية
+            # تنظيف كاش البحث من العناصر منتهية الصلاحية
             with cache_lock:
                 current_time = time.time()
                 expired_keys = [
@@ -655,7 +811,48 @@ async def periodic_cleanup():
                     del search_cache[key]
                 
                 if expired_keys:
-                    print(f"🧹 تم تنظيف {len(expired_keys)} عنصر منتهي الصلاحية من الكاش")
+                    print(f"🧹 تم تنظيف {len(expired_keys)} عنصر منتهي الصلاحية من كاش البحث")
+            
+            # تنظيف كاش التحميل من الملفات منتهية الصلاحية
+            with cache_lock:
+                current_time = time.time()
+                expired_downloads = [
+                    vid_id for vid_id, data in download_cache.items()
+                    if current_time - data['timestamp'] > 7200  # 2 ساعة
+                ]
+                
+                for vid_id in expired_downloads:
+                    try:
+                        data = download_cache[vid_id]
+                        # حذف الملفات منتهية الصلاحية
+                        if os.path.exists(data['audio_path']):
+                            await asyncio.get_event_loop().run_in_executor(
+                                None, os.remove, data['audio_path']
+                            )
+                        if data.get('thumbnail_path') and os.path.exists(data['thumbnail_path']):
+                            await asyncio.get_event_loop().run_in_executor(
+                                None, os.remove, data['thumbnail_path']
+                            )
+                        del download_cache[vid_id]
+                    except Exception as e:
+                        print(f"خطأ في تنظيف الملف {vid_id}: {e}")
+                
+                if expired_downloads:
+                    print(f"🧹 تم تنظيف {len(expired_downloads)} ملف منتهي الصلاحية من كاش التحميل")
+            
+            # تنظيف التحميلات النشطة المنتهية الصلاحية
+            with cache_lock:
+                current_time = time.time()
+                expired_active = [
+                    key for key, timestamp in active_downloads.items()
+                    if current_time - timestamp > 600  # 10 دقائق
+                ]
+                
+                for key in expired_active:
+                    del active_downloads[key]
+                
+                if expired_active:
+                    print(f"🧹 تم تنظيف {len(expired_active)} تحميل نشط منتهي الصلاحية")
             
             # تنظيف إحصائيات المستخدمين القديمة
             current_time = time.time()
@@ -685,7 +882,10 @@ print("🚀 تم تحميل مدير تحميل يوتيوب المطور بنج
 print(f"📊 الإعدادات الحالية:")
 print(f"   🍪 ملفات الكوكيز: {len(cookie_manager.cookies_files)}")
 print(f"   ⬇️ الحد الأقصى للتحميلات المتزامنة: {MAX_CONCURRENT_DOWNLOADS}")
-print(f"   📋 الحد الأقصى لحجم الكاش: {MAX_CACHE_SIZE}")
+print(f"   🔍 الحد الأقصى لكاش البحث: {MAX_CACHE_SIZE}")
+print(f"   💾 الحد الأقصى لكاش التحميل: {DOWNLOAD_CACHE_SIZE}")
 print(f"   ⏱️ معدل الطلبات: 5 طلبات/دقيقة لكل مستخدم")
-print(f"   🔐 نظام الحماية: مفعل")
+print(f"   🔐 نظام منع التكرار: مفعل")
+print(f"   📁 نظام الكاش المتقدم: مفعل")
+print(f"   🔄 التنظيف التلقائي: كل ساعة")
 print("=" * 50)
