@@ -228,8 +228,8 @@ async def download_audio(client, message, text):
 @Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=1)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
-    if await johned(client, message):
-     return
+    # if await johned(client, message):
+    #  return
     
     # استخراج النص من الأمر
     text = message.text.split(" ", 1)
@@ -243,8 +243,8 @@ async def gigshgxvkdnnj(client, message):
 @Client.on_message(filters.text & ~filters.command([""]) & ~filters.bot, group=2)
 async def handle_text_download(client, message):
     bot_username = client.me.username
-    if await johned(client, message):
-     return
+    # if await johned(client, message):
+    #  return
     
     # تجاهل الرسائل التي تبدأ بـ / أو تحتوي على @
     if message.text.startswith('/') or '@' in message.text:

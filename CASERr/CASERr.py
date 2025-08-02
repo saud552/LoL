@@ -486,7 +486,9 @@ async def johned(client, message):
     try:
       get = await client.get_chat_member(ch, message.from_user.id)
     except Exception as e:    	
-      return await message.reply_text(f"🚦عذرا عزيزي {message.from_user.mention} يجب عليك الاشترك في القناة اولا..\n\n    قنـاة الـبـوت :\n ⤹ https://t.me/{ch} ⤸", disable_web_page_preview=True, reply_markup=keyboard)
+      await message.reply_text(f"🚦عذرا عزيزي {message.from_user.mention} يجب عليك الاشترك في القناة اولا..\n\n    قنـاة الـبـوت :\n ⤹ https://t.me/{ch} ⤸", disable_web_page_preview=True, reply_markup=keyboard)
+      return True  # المستخدم غير مشترك
+   return False  # المستخدم مشترك
 
 @Client.on_message(filters.command(["تفعيل الاشتراك"], "") & filters.group, group=7530844)
 async def retthd(client: Client, message: Message):
