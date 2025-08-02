@@ -2,7 +2,7 @@ from pyrogram import Client, idle
 from pyromod import listen
 from config import *
 
-OWNER_ID = int(getenv("OWNER_ID", "985612253"))
+OWNER_ID = 985612253
 ch = "K55DD" 
 OWNER_USERNAME = getenv("OWNER_USERNAME", "AAAKP")
 ST = "AAAKP"
@@ -13,7 +13,7 @@ DEVS.append(ST)
 DEVS.append(LT)
 OWNER = "𝐷𝑟. 𝐾ℎ𝑎𝑦𝑎𝑙 𓏺"
 
-bot_token = getenv("BOT_TOKEN", "7305811865:AAF_PKkBWEUw-QdLg1ee5Xp7oksTG6XGK8c")
+bot_token = getenv("BOT_TOKEN", "8024375688:AAHYvfceRF22ZVMxlvqkdtfmR4rkWTyQDLo")
 bot_token2 = None
 
 api_id = int(getenv("API_ID", "8186557"))

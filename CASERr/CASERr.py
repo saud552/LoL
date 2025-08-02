@@ -479,14 +479,19 @@ def get_channel(bot_username):
         return []
 
 async def johned(client, message):
-   bot_username = client.me.username
-   for x in get_channel(bot_username):
-    ch = x[0]
-    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(" اضغط هنا للاشتراك بالقناة 🚦", url=f"https://t.me/{ch}")]])
-    try:
-      get = await client.get_chat_member(ch, message.from_user.id)
-    except Exception as e:    	
-      return await message.reply_text(f"🚦عذرا عزيزي {message.from_user.mention} يجب عليك الاشترك في القناة اولا..\n\n    قنـاة الـبـوت :\n ⤹ https://t.me/{ch} ⤸", disable_web_page_preview=True, reply_markup=keyboard)
+   try:
+       bot_username = client.me.username
+       for x in get_channel(bot_username):
+           ch = x[0]
+           keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(" اضغط هنا للاشتراك بالقناة 🚦", url=f"https://t.me/{ch}")]])
+           try:
+               get = await client.get_chat_member(ch, message.from_user.id)
+           except Exception as e:    	
+               await message.reply_text(f"🚦عذرا عزيزي {message.from_user.mention} يجب عليك الاشترك في القناة اولا..\n\n    قنـاة الـبـوت :\n ⤹ https://t.me/{ch} ⤸", disable_web_page_preview=True, reply_markup=keyboard)
+               return True
+       return False
+   except:
+       return False
 
 @Client.on_message(filters.command(["تفعيل الاشتراك"], "") & filters.group, group=7530844)
 async def retthd(client: Client, message: Message):
@@ -795,7 +800,7 @@ async def admin_r98hts(client: Client, CallbackQuery):
     if command == "english":
      button = [[InlineKeyboardButton(text="اضف البوت الي مجموعتك 🚦", url=f"https://t.me/{bot_username}?startgroup=True")], [InlineKeyboardButton(text=f"Channel ⚡", url=f"{soesh}"), InlineKeyboardButton(text=f"Group ⚡", url=f"{gr}")], [InlineKeyboardButton(text=f"{namew}", url=f"https://t.me/{wenru}")],]
      await CallbackQuery.answer("مرحبا بك في قسم اللغه الانجليزيه 🎧", show_alert=True)	
-     await CallbackQuery.edit_message_text(f"A Telegram Music Bot\nPlayed Music and Video in VC\nBot Online Now ......🖱️❤️\nAdd Me To Your Chat\Powered By [{namew}]", reply_markup=InlineKeyboardMarkup(button))
+     await CallbackQuery.edit_message_text(f"A Telegram Music Bot\\nPlayed Music and Video in VC\\nBot Online Now ......🖱️❤️\\nAdd Me To Your Chat\\Powered By [{namew}]", reply_markup=InlineKeyboardMarkup(button))
   
 @Client.on_message(filters.command(["/start","رجوع","رجوع للتحكم الكامل"], "") & filters.private, group=67875563)
 async def for_users(client, message):

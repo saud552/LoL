@@ -5,8 +5,7 @@ import aiohttp
 import requests
 import random 
 import asyncio
-import yt_dlp
-import time 
+import time
 from datetime import datetime, timedelta
 from youtube_search import YoutubeSearch
 from pyrogram.errors import (ChatAdminRequired,
@@ -14,51 +13,40 @@ from pyrogram.errors import (ChatAdminRequired,
                              UserNotParticipant)
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ChatType, ChatMemberStatus
-from config import *
-import numpy as np
-from yt_dlp import YoutubeDL
-from CASERr.CASERr import get_channel, johned
-from io import BytesIO
-import aiofiles
-import wget
-from pyrogram.types import *
+import subprocess
 import json
-from config import YOUTUBE_COOKIES_FILE
+import wget
+from CASERr.CASERr import johned
+import redis
+import sys
+from collections import defaultdict
+from yt_dlp import YoutubeDL
+
+redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 # قائمة الكلمات المحظورة
-yoro = ["Xnxx", "سكس","اباحيه","جنس","اباحي","زب","كسمك","كس","شرمطه","نيك","لبوه","فشخ","مهبل","نيك خلفى","بتتناك","مساج","كس ملبن","نيك جماعى","نيك جماعي","نيك بنات","رقص","قلع","خلع ملابس","بنات من غير هدوم","بنات ملط","نيك طيز","نيك من ورا","نيك في الكس","ارهاب","موت","حرب","سياسه","سياسي","سكسي","قحبه","شواز","ممويز","نياكه","xnxx","sex","xxx","Sex","Born","borno","Sesso","احا","خخخ","ميتينك","تناك","يلعن","كسك","كسمك","عرص","خول","علق","كسم","انيك","انيكك","اركبك","زبي","نيك","شرموط","فحل","ديوث","سالب","مقاطع","ورعان","هايج","مشتهي","زوبري","طيز","كسي","كسى","ساحق","سحق","لبوه","اريحها","مقاتع","لانجيري","سحاق","مقطع","مقتع","نودز","ندز","ملط","لانجرى","لانجري","لانجيرى","مولااااعه"]
+FORBIDDEN_WORDS = ["سكس", "porn", "xxx", "sex", "نيك", "عري"]
 
-# نظام تدوير الكوكيز
+def check_forbidden_words(text):
+    """فحص الكلمات المحظورة"""
+    text_lower = text.lower()
+    return any(word in text_lower for word in FORBIDDEN_WORDS)
+
+# مدير الكوكيز البسيط
 class CookieManager:
-    def __init__(self, cookies_dir="/workspace/cookies"):
-        self.cookies_dir = cookies_dir
-        self.current_index = 0
+    def __init__(self):
         self.cookies_files = []
-        self.load_cookies_files()
+        self.current_index = 0
+        self.load_cookies()
     
-    def load_cookies_files(self):
-        """تحميل قائمة ملفات الكوكيز المتاحة"""
-        try:
-            if os.path.exists(self.cookies_dir):
-                # البحث عن ملفات الكوكيز
-                for file in os.listdir(self.cookies_dir):
-                    if file.endswith('.txt') and 'cookie' in file.lower():
-                        file_path = os.path.join(self.cookies_dir, file)
-                        if os.path.getsize(file_path) > 100:  # التأكد من أن الملف ليس فارغاً
-                            self.cookies_files.append(file_path)
-                
-                # إضافة الملف الافتراضي إذا كان موجوداً
-                if YOUTUBE_COOKIES_FILE and os.path.exists(YOUTUBE_COOKIES_FILE):
-                    if YOUTUBE_COOKIES_FILE not in self.cookies_files:
-                        self.cookies_files.append(YOUTUBE_COOKIES_FILE)
-            
-            print(f"تم العثور على {len(self.cookies_files)} ملف كوكيز")
-            
-        except Exception as e:
-            print(f"خطأ في تحميل ملفات الكوكيز: {e}")
-            # استخدام الملف الافتراضي كاحتياطي
-            if YOUTUBE_COOKIES_FILE and os.path.exists(YOUTUBE_COOKIES_FILE):
-                self.cookies_files = [YOUTUBE_COOKIES_FILE]
+    def load_cookies(self):
+        """تحميل ملفات الكوكيز المتاحة"""
+        for i in range(1, 21):  # البحث عن ملفات من cookies1.txt إلى cookies20.txt
+            cookie_file = f"cookies{i}.txt"
+            if os.path.exists(cookie_file):
+                self.cookies_files.append(cookie_file)
+        
+        print(f"تم العثور على {len(self.cookies_files)} ملف كوكيز")
     
     def get_next_cookie(self):
         """الحصول على ملف الكوكيز التالي"""
@@ -67,35 +55,16 @@ class CookieManager:
         
         cookie_file = self.cookies_files[self.current_index]
         self.current_index = (self.current_index + 1) % len(self.cookies_files)
-        
-        print(f"استخدام ملف الكوكيز: {os.path.basename(cookie_file)}")
-        return cookie_file
-    
-    def get_random_cookie(self):
-        """الحصول على ملف كوكيز عشوائي"""
-        if not self.cookies_files:
-            return None
-        
-        cookie_file = random.choice(self.cookies_files)
-        print(f"استخدام ملف الكوكيز العشوائي: {os.path.basename(cookie_file)}")
         return cookie_file
 
 # إنشاء مدير الكوكيز
 cookie_manager = CookieManager()
 
-def check_forbidden_words(text):
-    """فحص النص للكلمات المحظورة"""
-    text_lower = text.lower()
-    for word in yoro:
-        if word.lower() in text_lower:
-            return True
-    return False
-
 def clean_temp_files(*files):
     """تنظيف الملفات المؤقتة"""
     for file_path in files:
         try:
-            if os.path.exists(file_path):
+            if file_path and os.path.exists(file_path):
                 os.remove(file_path)
         except Exception as e:
             print(f"خطأ في حذف الملف {file_path}: {e}")
@@ -111,7 +80,7 @@ async def download_audio(client, message, text):
     sedlyf = None
     
     # محاولة التحميل مع تدوير الكوكيز
-    max_retries = len(cookie_manager.cookies_files) if cookie_manager.cookies_files else 1
+    max_retries = min(3, len(cookie_manager.cookies_files)) if cookie_manager.cookies_files else 1
     
     for attempt in range(max_retries):
         try:
@@ -136,9 +105,9 @@ async def download_audio(client, message, text):
             
             # تحميل الصورة المصغرة
             kekme = f"https://img.youtube.com/vi/{fridayz}/hqdefault.jpg"
-            sedlyf = wget.download(kekme)
+            sedlyf = wget.download(kekme, bar=None)
             
-            # إعدادات التحميل مع الكوكيز الحالي
+            # إعدادات التحميل
             opts = {
                 'format': 'bestaudio[ext=m4a]', 
                 'outtmpl': '%(title)s.%(ext)s', 
@@ -192,11 +161,9 @@ async def download_audio(client, message, text):
             await asyncio.sleep(1)
 
 # الأوامر مع /
-@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=71328934)
+@Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=1)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
-    if await johned(client, message):
-     return
     
     # استخراج النص من الأمر
     text = message.text.split(" ", 1)
@@ -207,11 +174,17 @@ async def gigshgxvkdnnj(client, message):
     await download_audio(client, message, text)
 
 # الأوامر بدون /
-@Client.on_message(filters.text, group=71328935)
+@Client.on_message(filters.text & ~filters.command([""]) & ~filters.bot, group=2)
 async def handle_text_download(client, message):
     bot_username = client.me.username
-    if await johned(client, message):
-     return
+    
+    # تجاهل الرسائل التي تبدأ بـ / أو تحتوي على @
+    if message.text.startswith('/') or '@' in message.text:
+        return
+    
+    # تجاهل الردود على الرسائل
+    if message.reply_to_message:
+        return
     
     # فحص إذا كان النص يبدأ بأحد الأوامر بدون /
     commands = ["تحميل", "نزل", "تنزيل", "يوتيوب", "حمل", "تنزل", "يوت", "بحث"]
@@ -230,6 +203,9 @@ async def handle_text_download(client, message):
         return  # إذا لم يكن أمر، لا تفعل شيئاً
     
     if not text:  # إذا لم يكن هناك نص بعد الأمر
-        return await message.reply_text("يرجى كتابة ما تريد تحميله بعد الأمر\nمثال: بحث هيفاء وهبي بوس الواوا")
+        return await message.reply_text("يرجى كتابة ما تريد تحميله بعد الأمر\nمثال: بحث عليكي عيون")
     
     await download_audio(client, message, text)
+
+print("✅ تم تحميل النظام البسيط والفعال!")
+print(f"📊 ملفات الكوكيز المتاحة: {len(cookie_manager.cookies_files)}")
