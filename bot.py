@@ -19,7 +19,7 @@ bot_token2 = None
 api_id = int(getenv("API_ID", "8186557"))
 api_hash = getenv("API_HASH", "efd77b34c69c164ce158037ff5a0d117")
 
-bot = Client("ITA", api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=dict(root="CASERr"))
+bot = Client("ITA", api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=dict(root="CASER"))
 
 # إنشاء العميل الثاني فقط إذا كان هناك session string
 if bot_token2:

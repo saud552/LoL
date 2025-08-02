@@ -1,1 +1,269 @@
 nohup: ignoring input
+Error 111 connecting to 127.0.0.1:6379. Connection refused.
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 385, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/retry.py", line 87, in call_with_retry
+    return do()
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 386, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 797, in _connect
+    raise err
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 781, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyromod/listen/listen.py", line 93, in resolve_listener
+    await self.user_callback(client, message, *args)
+  File "/workspace/CASERr/CASERr.py", line 1403, in forbroacasts
+    if r.get(f"{m.from_user.id}broadcast{m.chat.id}{bot_id}"):
+       ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/commands/core.py", line 1829, in get
+    return self.execute_command("GET", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 623, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 629, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/utils.py", line 191, in wrapper
+    return func(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 1530, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 379, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 391, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:6379. Connection refused.
+Error 111 connecting to 127.0.0.1:6379. Connection refused.
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 385, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/retry.py", line 87, in call_with_retry
+    return do()
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 386, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 797, in _connect
+    raise err
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 781, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyromod/listen/listen.py", line 93, in resolve_listener
+    await self.user_callback(client, message, *args)
+  File "/workspace/CASERr/CASERr.py", line 1472, in twasol2
+    if r.get(f'enable_twasol{bot_id}'):
+       ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/commands/core.py", line 1829, in get
+    return self.execute_command("GET", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 623, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 629, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/utils.py", line 191, in wrapper
+    return func(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 1530, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 379, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 391, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:6379. Connection refused.
+'<' not supported between instances of 'NoneType' and 'int'
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 62, in resolve_peer
+    return await self.storage.get_peer_by_id(peer_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/storage/sqlite_storage.py", line 142, in get_peer_by_id
+    raise KeyError(f"ID not found: {peer_id}")
+KeyError: 'ID not found: None'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyromod/listen/listen.py", line 93, in resolve_listener
+    await self.user_callback(client, message, *args)
+  File "/workspace/CASERr/CASERr.py", line 746, in fousers
+    usr1 = await client.get_chat(OWNER_ID)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/chats/get_chat.py", line 78, in get_chat
+    peer = await self.resolve_peer(chat_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/methods/advanced/resolve_peer.py", line 89, in resolve_peer
+    peer_type = utils.get_peer_type(peer_id)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/utils.py", line 237, in get_peer_type
+    if peer_id < 0:
+       ^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'int'
+Error 111 connecting to 127.0.0.1:6379. Connection refused.
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 385, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/retry.py", line 87, in call_with_retry
+    return do()
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 386, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 797, in _connect
+    raise err
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 781, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyromod/listen/listen.py", line 93, in resolve_listener
+    await self.user_callback(client, message, *args)
+  File "/workspace/CASERr/CASERr.py", line 1403, in forbroacasts
+    if r.get(f"{m.from_user.id}broadcast{m.chat.id}{bot_id}"):
+       ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/commands/core.py", line 1829, in get
+    return self.execute_command("GET", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 623, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 629, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/utils.py", line 191, in wrapper
+    return func(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 1530, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 379, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 391, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:6379. Connection refused.
+Error 111 connecting to 127.0.0.1:6379. Connection refused.
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 385, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/retry.py", line 87, in call_with_retry
+    return do()
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 386, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 797, in _connect
+    raise err
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 781, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyrogram/dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/pyromod/listen/listen.py", line 93, in resolve_listener
+    await self.user_callback(client, message, *args)
+  File "/workspace/CASERr/CASERr.py", line 1472, in twasol2
+    if r.get(f'enable_twasol{bot_id}'):
+       ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/commands/core.py", line 1829, in get
+    return self.execute_command("GET", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 623, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/client.py", line 629, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/utils.py", line 191, in wrapper
+    return func(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 1530, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 379, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.13/site-packages/redis/connection.py", line 391, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:6379. Connection refused.
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+ERROR: [youtube] 6Q8e8tmKWMI: Sign in to confirm you’re not a bot. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+تم تشغيل الصانع بنجاح..💗
+🔄 جاري تحميل نظام CASERr...
+✅ تم العثور على 12 ملف كوكيز صالح
+🚀 تم تحميل مدير تحميل يوتيوب المطور بنجاح!
+📊 الإعدادات الحالية:
+   🍪 ملفات الكوكيز: 12
+   ⬇️ التحميلات المتزامنة: 10000 (لا محدود عملياً)
+   🔍 كاش البحث: 10000 عنصر
+   💾 كاش التحميل: 5000 ملف
+   ⏱️ معدل الطلبات: بلا حدود
+   📏 حجم الملفات: بلا حدود
+   📝 طول النصوص: بلا حدود
+   🔐 نظام منع التكرار المتقدم: مفعل
+   📋 تتبع الطلبات الذكي: مفعل
+   📁 نظام الكاش المتقدم: مفعل
+   🚫 إلغاء الطلبات المتداخلة: مفعل
+   🔄 التنظيف التلقائي: كل ساعة
+   🚀 وضع الأداء العالي: مفعل (بلا قيود)
+==================================================
+✅ تم تحميل نظام التشغيل الذكي المحسن بنجاح!
+✅ تم تحميل نظام CASERr بنجاح!
+🔄 جاري تحميل نظام CASERr...
+✅ تم تحميل نظام CASERr بنجاح!
+✅ تم تشغيل التنظيف الدوري بنجاح
+🔄 طلب b145ab78a30e: searching_cache
+🔄 طلب b145ab78a30e: searching_youtube
+🔄 طلب b145ab78a30e: search_completed
+🔄 طلب b145ab78a30e: checking_download_cache
+🔄 طلب b145ab78a30e: preparing_download
+🔄 كوكيز موزع للمستخدم 985612253: cookies3.txt
+🔄 طلب b145ab78a30e: downloading_thumbnail
+🔄 طلب b145ab78a30e: downloading_audio
+❌ خطأ في التحميل للمستخدم 985612253: 'NoneType' object has no attribute 'setdefault'
+⚠️ خطأ في الكوكيز cookies3.txt (إجمالي الأخطاء: 1)
+❌ طلب b145ab78a30e اكتمل عبر: error: 'NoneType' object has no attribute 'setdefault'
+🔄 طلب 2f661f893f45: searching_cache
+📋 استخدام نتيجة محفوظة للبحث: احبك...
+🔄 طلب 2f661f893f45: found_in_search_cache
+🔄 طلب 2f661f893f45: checking_download_cache
+🔄 طلب 2f661f893f45: preparing_download
+🔄 كوكيز موزع للمستخدم 985612253: cookies3.txt
+🔄 طلب 2f661f893f45: downloading_thumbnail
+🔄 طلب 2f661f893f45: downloading_audio
+❌ خطأ في التحميل للمستخدم 985612253: 'NoneType' object has no attribute 'setdefault'
+⚠️ خطأ في الكوكيز cookies3.txt (إجمالي الأخطاء: 2)
+❌ طلب 2f661f893f45 اكتمل عبر: error: 'NoneType' object has no attribute 'setdefault'

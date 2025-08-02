@@ -22,11 +22,11 @@ from pyrogram.enums import ChatType
 import asyncio
 import random
 from bot import *
-from CASERr.play import Call
+# from CASERr.play import Call
 from bot import bot_id as hos_id, lolo
-from CASERr.hossam import mutegdv2d
-from CASERr.CASERr import photo_responses
-from CASERr.azan import azan, azkar, azkar_chatt, nday_catt
+# from CASERr.hossam import mutegdv2d
+# from CASERr.CASERr import photo_responses
+# from CASERr.azan import azan, azkar, azkar_chatt, nday_catt
 from config import user as usr, dev, call, logger, logger_mode, botname, appp
 import os
 import shutil
@@ -311,19 +311,19 @@ async def start_bot(client, message):
                 user = Client("CASER", api_id=API_ID, api_hash=API_HASH, session_string=SESSION, in_memory=True)
                 await bot.start()
                 await user.start()
-                await Call(bot_username,message)
+                # await Call(bot_username,message)  # تم تعطيله مؤقتاً
                 Musi.append(bot_username)
                 appp[bot_username] = bot
                 usr[bot_username] = user
                 dev[bot_username] = dev_id
                 logger[bot_username] = logg
-                photo_responses[bot_username] = False
+                # photo_responses[bot_username] = False  # تم تعطيله مؤقتاً
                 await bot.send_message(dev_id, "**تم تشغيل البوت عزيزي المطور 🎧🔥**")
-                asyncio.create_task(azkar(bot_username))
-                asyncio.create_task(azkar_chatt(bot_username))
-                asyncio.create_task(nday_catt(bot_username))
-                asyncio.create_task(mutegdv2d(bot_username))
-                asyncio.create_task(azan(bot_username))
+                # asyncio.create_task(azkar(bot_username))  # تم تعطيله مؤقتاً
+                # asyncio.create_task(azkar_chatt(bot_username))  # تم تعطيله مؤقتاً
+                # asyncio.create_task(nday_catt(bot_username))  # تم تعطيله مؤقتاً
+                # asyncio.create_task(mutegdv2d(bot_username))  # تم تعطيله مؤقتاً
+                # asyncio.create_task(azan(bot_username))  # تم تعطيله مؤقتاً
         except Exception as e:
             await message.reply_text(f"**حدث خطا في تشغيل هذا البوت: @{bot_username}** \nالخطا {e} ")
      
