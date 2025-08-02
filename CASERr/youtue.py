@@ -403,37 +403,10 @@ async def download_audio(client, message, text):
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         }
         
-                 # التحميل مع retry ذكي
-         max_retries = min(len(cookie_manager.cookies_files), 3)  # جرب حتى 3 كوكيز مختلفة
-         
-         for retry_attempt in range(max_retries):
-             try:
-                 if retry_attempt > 0:
-                     # جرب كوكيز مختلف في المحاولات التالية
-                     cookie_file = cookie_manager.get_best_cookie(user_id + retry_attempt)
-                     opts['cookiefile'] = cookie_file
-                     print(f"🔄 محاولة {retry_attempt + 1} مع كوكيز جديد")
-                 
-                 with YoutubeDL(opts) as ytdl:
-                     ytdl_data = ytdl.extract_info(mo, download=True)
-                     audio_file = ytdl.prepare_filename(ytdl_data)
-                 
-                 # إذا نجح التحميل، اخرج من حلقة الـ retry
-                 break
-                 
-             except Exception as retry_error:
-                 print(f"❌ فشلت محاولة {retry_attempt + 1}: {retry_error}")
-                 
-                 # تسجيل خطأ الكوكيز
-                 if cookie_file:
-                     cookie_manager.report_error(cookie_file)
-                 
-                 # إذا كانت المحاولة الأخيرة، ارفع الخطأ
-                 if retry_attempt == max_retries - 1:
-                     raise retry_error
-                 
-                 # انتظار قصير بين المحاولات
-                 await asyncio.sleep(1)
+        # التحميل البسيط والفعال
+        with YoutubeDL(opts) as ytdl:
+            ytdl_data = ytdl.extract_info(mo, download=True)
+            audio_file = ytdl.prepare_filename(ytdl_data)
         
         # إلغاء الطلبات المتعلقة بنفس الفيديو بعد نجاح التحميل
         cancel_related_requests(fridayz, exclude_request_id=request_id)
