@@ -158,8 +158,12 @@ async def download_audio(client, message, text):
                     return await message.reply_text("لا توجد ملفات كوكيز متاحة")
                 
                 # البحث السريع في YouTube
-                search = SearchVideos(text, offset=1, mode="dict", max_results=1)
-                mi = await loop.run_in_executor(executor, search.result)
+                try:
+                    search = SearchVideos(text, offset=1, mode="dict", max_results=1)
+                    mi = await loop.run_in_executor(executor, search.result)
+                except Exception as search_error:
+                    print(f"خطأ في البحث: {search_error}")
+                    mi = None
                 
                 if not mi or not mi.get("search_result") or len(mi["search_result"]) == 0:
                     await h.delete()
@@ -202,10 +206,14 @@ async def download_audio(client, message, text):
                     opts["cookiefile"] = cookie_file
                 
                 # تحميل متوازي لتحسين الأداء
-                loop = asyncio.get_event_loop()
-                ytdl_data, audio_file = await loop.run_in_executor(
-                    executor, download_with_ytdlp, mo, opts
-                )
+                try:
+                    loop = asyncio.get_event_loop()
+                    ytdl_data, audio_file = await loop.run_in_executor(
+                        executor, download_with_ytdlp, mo, opts
+                    )
+                except Exception as download_error:
+                    print(f"خطأ في التحميل: {download_error}")
+                    raise download_error  # إعادة رفع الخطأ للمعالجة في الـ except الخارجي
                 
                 # إعداد الرسالة
                 capy = f"[{thum}]({mo})"
@@ -213,19 +221,29 @@ async def download_audio(client, message, text):
                 title = str(ytdl_data.get("title", "Unknown"))
                 performer = str(ytdl_data.get("uploader", "Unknown"))
                 
-                await h.delete()  # حذف رسالة "جاري التحميل..."
+                try:
+                    await h.delete()  # حذف رسالة "جاري التحميل..."
+                except:
+                    pass  # تجاهل خطأ حذف الرسالة
                 
                 # إرسال الملف الصوتي
-                await client.send_audio(
-                    message.chat.id, 
-                    audio=audio_file, 
-                    duration=duration, 
-                    title=title, 
-                    performer=performer, 
-                    file_name=title, 
-                    thumb=sedlyf,
-                    caption=capy
-                )
+                try:
+                    await client.send_audio(
+                        message.chat.id, 
+                        audio=audio_file, 
+                        duration=duration, 
+                        title=title, 
+                        performer=performer, 
+                        file_name=title, 
+                        thumb=sedlyf,
+                        caption=capy
+                    )
+                except Exception as send_error:
+                    print(f"خطأ في إرسال الملف: {send_error}")
+                    try:
+                        await message.reply_text("❌ حدث خطأ أثناء إرسال الملف")
+                    except:
+                        pass
                 
                 # تنظيف الملفات المؤقتة
                 clean_temp_files(audio_file, sedlyf)
@@ -263,11 +281,13 @@ async def download_audio(client, message, text):
 @Client.on_message(filters.command(["تحميل", "نزل", "تنزيل", "يوتيوب","حمل","تنزل", "يوت", "بحث"], ""), group=1)
 async def gigshgxvkdnnj(client, message):
     bot_username = client.me.username
-    try:
-        if await johned(client, message):
-            return
-    except:
-        pass  # تجاهل أخطاء فحص الاشتراك
+    # تعطيل فحص الاشتراك مؤقتاً لتجنب أخطاء Peer ID
+    # try:
+    #     if await johned(client, message):
+    #         return
+    # except Exception as subscription_error:
+    #     print(f"خطأ في فحص الاشتراك: {subscription_error}")
+    #     pass  # تجاهل أخطاء فحص الاشتراك
     
     # استخراج النص من الأمر
     text = message.text.split(" ", 1)
@@ -281,11 +301,13 @@ async def gigshgxvkdnnj(client, message):
 @Client.on_message(filters.text & ~filters.command([""]) & ~filters.bot, group=2)
 async def handle_text_download(client, message):
     bot_username = client.me.username
-    try:
-        if await johned(client, message):
-            return
-    except:
-        pass  # تجاهل أخطاء فحص الاشتراك
+    # تعطيل فحص الاشتراك مؤقتاً لتجنب أخطاء Peer ID
+    # try:
+    #     if await johned(client, message):
+    #         return
+    # except Exception as subscription_error:
+    #     print(f"خطأ في فحص الاشتراك: {subscription_error}")
+    #     pass  # تجاهل أخطاء فحص الاشتراك
     
     # تجاهل الرسائل التي تبدأ بـ / أو تحتوي على @
     if message.text.startswith('/') or '@' in message.text:
@@ -316,5 +338,37 @@ async def handle_text_download(client, message):
     
     await download_audio(client, message, text)
 
+async def cleanup_system():
+    """تنظيف دوري للنظام"""
+    while True:
+        try:
+            # تنظيف الطلبات القديمة (أكثر من 5 دقائق)
+            current_time = time.time()
+            old_requests = [k for k, v in active_requests.items() if current_time - v > 300]
+            for req in old_requests:
+                del active_requests[req]
+            
+            if old_requests:
+                print(f"🧹 تم تنظيف {len(old_requests)} طلبات قديمة")
+            
+            # تنظيف الملفات المؤقتة
+            temp_files = [f for f in os.listdir('.') if f.endswith(('.jpg', '.mp3', '.m4a', '.webp', '.tmp'))]
+            for temp_file in temp_files[:5]:  # حذف أقصى 5 ملفات في كل مرة
+                try:
+                    if os.path.getsize(temp_file) > 0:  # تأكد أن الملف ليس قيد الاستخدام
+                        os.remove(temp_file)
+                        print(f"🗑️ تم حذف ملف مؤقت: {temp_file}")
+                except:
+                    pass
+            
+            await asyncio.sleep(300)  # كل 5 دقائق
+        except Exception as e:
+            print(f"خطأ في التنظيف: {e}")
+            await asyncio.sleep(300)
+
+# بدء التنظيف التلقائي
+asyncio.create_task(cleanup_system())
+
 print("✅ تم تحميل النظام البسيط والفعال!")
 print(f"📊 ملفات الكوكيز المتاحة: {len(cookie_manager.cookies_files)}")
+print("🧹 نظام التنظيف التلقائي نشط")
