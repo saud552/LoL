@@ -520,8 +520,8 @@ async def download_audio(client, message, text):
         if not tracker.is_active():
             await status_message.delete()
             return
-        
-        # البحث في الكاش أولاً
+            
+            # البحث في الكاش أولاً
         cached_result = await get_cached_search(text)
         if cached_result:
             search_result = cached_result
@@ -574,213 +574,213 @@ async def download_audio(client, message, text):
         if not tracker.is_active():
             await status_message.delete()
             return
-        
-        # البحث عن الملف في كاش التحميلات أولاً
-        tracker.update_stage("checking_download_cache")
-        cached_download = await get_cached_download(video_id)
-        if cached_download:
-            tracker.update_stage("sending_from_cache")
-            await status_message.edit_text(f"📁 إرسال الملف من الكاش... (ID: {request_id[:6]})")
             
-            # إلغاء جميع الطلبات المتعلقة بنفس الفيديو
+            # البحث عن الملف في كاش التحميلات أولاً
+            tracker.update_stage("checking_download_cache")
+            cached_download = await get_cached_download(video_id)
+            if cached_download:
+                tracker.update_stage("sending_from_cache")
+                await status_message.edit_text(f"📁 إرسال الملف من الكاش... (ID: {request_id[:6]})")
+                
+                # إلغاء جميع الطلبات المتعلقة بنفس الفيديو
+                await cancel_related_requests(video_id, exclude_request_id=request_id)
+                
+                # إرسال الملف المحفوظ مباشرة
+                await client.send_audio(
+                    chat_id=message.chat.id,
+                    audio=cached_download['audio_path'],
+                    duration=cached_download['metadata']['duration'],
+                    title=cached_download['metadata']['title'],
+                    performer=cached_download['metadata']['performer'],
+                    thumb=cached_download['thumbnail_path'],
+                    caption=cached_download['metadata']['caption'],
+                    reply_to_message_id=message.id
+                )
+                
+                await status_message.delete()
+                tracker.complete(True, "download_cache")
+                print(f"✅ تم إرسال ملف محفوظ: {video_title} للمستخدم {user_id}")
+                return  # توقف هنا - تم الإرسال من الكاش
+            
+            # إذا لم يوجد في الكاش، ابدأ التحميل الجديد
+            tracker.update_stage("preparing_download")
+            await status_message.edit_text(f"📊 فحص معلومات الفيديو... (ID: {request_id[:6]})")
+            
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await status_message.delete()
+                return
+            
+            # الحصول على أفضل ملف كوكيز
+            cookie_file = cookie_manager.get_best_cookie(user_id)
+            if not cookie_file:
+                tracker.complete(False, "no_cookies")
+                await status_message.delete()
+                return await message.reply_text("❌ لا توجد ملفات كوكيز متاحة")
+            
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await status_message.delete()
+                return
+            
+            # تحميل الصورة المصغرة بشكل غير متزامن
+            tracker.update_stage("downloading_thumbnail")
+            await status_message.edit_text(f"🖼️ تحميل الصورة المصغرة... (ID: {request_id[:6]})")
+            thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+            thumbnail_file = await download_thumbnail_async(thumbnail_url)
+            
+            # فحص إلغاء الطلب
+            if not tracker.is_active():
+                await clean_temp_files(thumbnail_file)
+                await status_message.delete()
+                return
+            
+            # إعدادات التحميل المحسنة
+            tracker.update_stage("downloading_audio")
+            await status_message.edit_text(f"⬇️ تحميل الملف الصوتي... (ID: {request_id[:6]})")
+            
+            opts = {
+                'format': 'bestaudio/best',  # تم إلغاء حد الحجم - تحميل بأي حجم
+                'outtmpl': f'audio_{int(time.time() * 1000000)}_{video_id}_%(title)s.%(ext)s',
+                'cookiefile': cookie_file,
+                'quiet': True,
+                'no_warnings': True,
+                'extract_flat': False,
+                'writethumbnail': False,
+                'writeinfojson': False,
+                'ignoreerrors': True,
+                'retries': 3,
+                'fragment_retries': 3,
+                'socket_timeout': 300,  # تم رفع timeout إلى 5 دقائق
+            }
+            
+            # تحميل الملف في thread منفصل لعدم حجب البوت
+            def download_with_ytdl():
+                with YoutubeDL(opts) as ytdl:
+                    info = ytdl.extract_info(video_url, download=True)
+                    filename = ytdl.prepare_filename(info)
+                    return info, filename
+            
+            ytdl_data, audio_file = await asyncio.get_event_loop().run_in_executor(
+                None, download_with_ytdl
+            )
+            
+            # فحص إلغاء الطلب بعد التحميل
+            if not tracker.is_active():
+                await clean_temp_files(audio_file, thumbnail_file)
+                await status_message.delete()
+                return
+            
+            # إلغاء جميع الطلبات المتعلقة بنفس الفيديو بعد نجاح التحميل
             await cancel_related_requests(video_id, exclude_request_id=request_id)
             
-            # إرسال الملف المحفوظ مباشرة
+            # تم إلغاء فحص حجم الملف - قبول أي حجم
+            
+            # إعداد معلومات الملف
+            tracker.update_stage("preparing_send")
+            duration = int(ytdl_data.get("duration", 0))
+            title = str(ytdl_data.get("title", "Unknown"))[:100]  # تحديد طول العنوان
+            performer = str(ytdl_data.get("uploader", "Unknown"))[:50]
+            caption = f"🎵 [{title}]({video_url})\n👤 {performer}"
+            
+            await status_message.edit_text(f"📤 إرسال الملف... (ID: {request_id[:6]})")
+            
+            # فحص إلغاء الطلب قبل الإرسال
+            if not tracker.is_active():
+                await clean_temp_files(audio_file, thumbnail_file)
+                await status_message.delete()
+                return
+            
+            # إرسال الملف الصوتي
             await client.send_audio(
                 chat_id=message.chat.id,
-                audio=cached_download['audio_path'],
-                duration=cached_download['metadata']['duration'],
-                title=cached_download['metadata']['title'],
-                performer=cached_download['metadata']['performer'],
-                thumb=cached_download['thumbnail_path'],
-                caption=cached_download['metadata']['caption'],
+                audio=audio_file,
+                duration=duration,
+                title=title,
+                performer=performer,
+                thumb=thumbnail_file,
+                caption=caption,
                 reply_to_message_id=message.id
             )
             
-            await status_message.delete()
-            tracker.complete(True, "download_cache")
-            print(f"✅ تم إرسال ملف محفوظ: {video_title} للمستخدم {user_id}")
-            return  # توقف هنا - تم الإرسال من الكاش
-        
-        # إذا لم يوجد في الكاش، ابدأ التحميل الجديد
-        tracker.update_stage("preparing_download")
-        await status_message.edit_text(f"📊 فحص معلومات الفيديو... (ID: {request_id[:6]})")
-        
-        # فحص إلغاء الطلب
-        if not tracker.is_active():
-            await status_message.delete()
-            return
-        
-        # الحصول على أفضل ملف كوكيز
-        cookie_file = cookie_manager.get_best_cookie(user_id)
-        if not cookie_file:
-            tracker.complete(False, "no_cookies")
-            await status_message.delete()
-            return await message.reply_text("❌ لا توجد ملفات كوكيز متاحة")
-        
-        # فحص إلغاء الطلب
-        if not tracker.is_active():
-            await status_message.delete()
-            return
-        
-        # تحميل الصورة المصغرة بشكل غير متزامن
-        tracker.update_stage("downloading_thumbnail")
-        await status_message.edit_text(f"🖼️ تحميل الصورة المصغرة... (ID: {request_id[:6]})")
-        thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-        thumbnail_file = await download_thumbnail_async(thumbnail_url)
-        
-        # فحص إلغاء الطلب
-        if not tracker.is_active():
-            await clean_temp_files(thumbnail_file)
-            await status_message.delete()
-            return
-        
-        # إعدادات التحميل المحسنة
-        tracker.update_stage("downloading_audio")
-        await status_message.edit_text(f"⬇️ تحميل الملف الصوتي... (ID: {request_id[:6]})")
-        
-        opts = {
-            'format': 'bestaudio/best',  # تم إلغاء حد الحجم - تحميل بأي حجم
-            'outtmpl': f'audio_{int(time.time() * 1000000)}_{video_id}_%(title)s.%(ext)s',
-            'cookiefile': cookie_file,
-            'quiet': True,
-            'no_warnings': True,
-            'extract_flat': False,
-            'writethumbnail': False,
-            'writeinfojson': False,
-            'ignoreerrors': True,
-            'retries': 3,
-            'fragment_retries': 3,
-            'socket_timeout': 300,  # تم رفع timeout إلى 5 دقائق
-        }
-        
-        # تحميل الملف في thread منفصل لعدم حجب البوت
-        def download_with_ytdl():
-            with YoutubeDL(opts) as ytdl:
-                info = ytdl.extract_info(video_url, download=True)
-                filename = ytdl.prepare_filename(info)
-                return info, filename
-        
-        ytdl_data, audio_file = await asyncio.get_event_loop().run_in_executor(
-            None, download_with_ytdl
-        )
-        
-        # فحص إلغاء الطلب بعد التحميل
-        if not tracker.is_active():
-            await clean_temp_files(audio_file, thumbnail_file)
-            await status_message.delete()
-            return
-        
-        # إلغاء جميع الطلبات المتعلقة بنفس الفيديو بعد نجاح التحميل
-        await cancel_related_requests(video_id, exclude_request_id=request_id)
-        
-        # تم إلغاء فحص حجم الملف - قبول أي حجم
-        
-        # إعداد معلومات الملف
-        tracker.update_stage("preparing_send")
-        duration = int(ytdl_data.get("duration", 0))
-        title = str(ytdl_data.get("title", "Unknown"))[:100]  # تحديد طول العنوان
-        performer = str(ytdl_data.get("uploader", "Unknown"))[:50]
-        caption = f"🎵 [{title}]({video_url})\n👤 {performer}"
-        
-        await status_message.edit_text(f"📤 إرسال الملف... (ID: {request_id[:6]})")
-        
-        # فحص إلغاء الطلب قبل الإرسال
-        if not tracker.is_active():
-            await clean_temp_files(audio_file, thumbnail_file)
-            await status_message.delete()
-            return
-        
-        # إرسال الملف الصوتي
-        await client.send_audio(
-            chat_id=message.chat.id,
-            audio=audio_file,
-            duration=duration,
-            title=title,
-            performer=performer,
-            thumb=thumbnail_file,
-            caption=caption,
-            reply_to_message_id=message.id
-        )
-        
-        # حفظ الملف في كاش التحميل للاستخدام المستقبلي
-        tracker.update_stage("caching_result")
-        metadata = {
-            'duration': duration,
-            'title': title,
-            'performer': performer,
-            'caption': caption
-        }
-        await cache_download_result(video_id, audio_file, thumbnail_file, metadata)
-        
-        await status_message.delete()
-        tracker.complete(True, "full_download")
-        print(f"✅ تم تحميل وحفظ بنجاح: {title} للمستخدم {user_id}")
-        
-        # لا تحذف الملفات هنا - سيتم حذفها تلقائياً عند تنظيف الكاش
-        return
-        
-    except Exception as e:
-        error_msg = str(e)
-        print(f"❌ خطأ في التحميل للمستخدم {user_id}: {error_msg}")
-        
-        # تسجيل خطأ الكوكيز
-        if cookie_file:
-            cookie_manager.report_cookie_error(cookie_file)
-        
-        # إنهاء تتبع الطلب في حالة الخطأ
-        tracker.complete(False, f"error: {error_msg[:50]}")
-        
-        try:
-            await status_message.delete()
-        except:
-            pass
-        
-        # رسائل خطأ مفصلة
-        if "Sign in to confirm your age" in error_msg:
-            error_response = "❌ هذا الفيديو يتطلب تسجيل دخول للتأكد من العمر"
-        elif "Video unavailable" in error_msg:
-            error_response = "❌ هذا الفيديو غير متاح أو محذوف"
-        elif "Private video" in error_msg:
-            error_response = "❌ هذا فيديو خاص"
-        elif "blocked" in error_msg.lower():
-            error_response = "❌ هذا الفيديو محجوب في منطقتك"
-        else:
-            error_response = "❌ حدث خطأ أثناء التحميل، حاول مرة أخرى"
-        
-        await message.reply_text(error_response)
-        
-    finally:
-        # تنظيف الملفات المؤقتة فقط إذا لم يتم حفظها في الكاش أو كان الطلب ملغى
-        should_clean = True
-        
-        try:
-            # فحص إذا تم حفظ الملف في الكاش
-            if 'video_id' in locals() and video_id and video_id in download_cache:
-                should_clean = False
-            elif tracker and tracker.is_completed and tracker.current_stage.startswith("completed"):
-                should_clean = False
+            # حفظ الملف في كاش التحميل للاستخدام المستقبلي
+            tracker.update_stage("caching_result")
+            metadata = {
+                'duration': duration,
+                'title': title,
+                'performer': performer,
+                'caption': caption
+            }
+            await cache_download_result(video_id, audio_file, thumbnail_file, metadata)
             
-            if should_clean:
-                # تنظيف آمن للملفات المؤقتة
-                files_to_clean = []
-                if 'audio_file' in locals() and audio_file:
-                    files_to_clean.append(audio_file)
-                if 'thumbnail_file' in locals() and thumbnail_file:
-                    files_to_clean.append(thumbnail_file)
+            await status_message.delete()
+            tracker.complete(True, "full_download")
+            print(f"✅ تم تحميل وحفظ بنجاح: {title} للمستخدم {user_id}")
+            
+            # لا تحذف الملفات هنا - سيتم حذفها تلقائياً عند تنظيف الكاش
+            return
+            
+        except Exception as e:
+            error_msg = str(e)
+            print(f"❌ خطأ في التحميل للمستخدم {user_id}: {error_msg}")
+            
+            # تسجيل خطأ الكوكيز
+            if cookie_file:
+                cookie_manager.report_cookie_error(cookie_file)
+            
+            # إنهاء تتبع الطلب في حالة الخطأ
+            tracker.complete(False, f"error: {error_msg[:50]}")
+            
+            try:
+                await status_message.delete()
+            except:
+                pass
+            
+            # رسائل خطأ مفصلة
+            if "Sign in to confirm your age" in error_msg:
+                error_response = "❌ هذا الفيديو يتطلب تسجيل دخول للتأكد من العمر"
+            elif "Video unavailable" in error_msg:
+                error_response = "❌ هذا الفيديو غير متاح أو محذوف"
+            elif "Private video" in error_msg:
+                error_response = "❌ هذا فيديو خاص"
+            elif "blocked" in error_msg.lower():
+                error_response = "❌ هذا الفيديو محجوب في منطقتك"
+            else:
+                error_response = "❌ حدث خطأ أثناء التحميل، حاول مرة أخرى"
+            
+            await message.reply_text(error_response)
+            
+        finally:
+            # تنظيف الملفات المؤقتة فقط إذا لم يتم حفظها في الكاش أو كان الطلب ملغى
+            should_clean = True
+            
+            try:
+                # فحص إذا تم حفظ الملف في الكاش
+                if 'video_id' in locals() and video_id and video_id in download_cache:
+                    should_clean = False
+                elif tracker and tracker.is_completed and tracker.current_stage.startswith("completed"):
+                    should_clean = False
                 
-                if files_to_clean:
-                    await clean_temp_files(*files_to_clean)
+                if should_clean:
+                    # تنظيف آمن للملفات المؤقتة
+                    files_to_clean = []
+                    if 'audio_file' in locals() and audio_file:
+                        files_to_clean.append(audio_file)
+                    if 'thumbnail_file' in locals() and thumbnail_file:
+                        files_to_clean.append(thumbnail_file)
+                    
+                    if files_to_clean:
+                        await clean_temp_files(*files_to_clean)
+                
+            except Exception as cleanup_error:
+                print(f"❌ خطأ في تنظيف الملفات: {cleanup_error}")
             
-        except Exception as cleanup_error:
-            print(f"❌ خطأ في تنظيف الملفات: {cleanup_error}")
-        
-        # التأكد من تنظيف التتبع
-        try:
-            if 'tracker' in locals() and tracker and not tracker.is_completed:
-                tracker.complete(False, "cleanup")
-        except Exception as tracker_error:
-            print(f"❌ خطأ في تنظيف التتبع: {tracker_error}")
+            # التأكد من تنظيف التتبع
+            try:
+                if 'tracker' in locals() and tracker and not tracker.is_completed:
+                    tracker.complete(False, "cleanup")
+            except Exception as tracker_error:
+                print(f"❌ خطأ في تنظيف التتبع: {tracker_error}")
 
 # دالة مساعدة للتحقق من صحة النص المطلوب تحميله
 def validate_search_text(text):
@@ -947,9 +947,9 @@ async def stats_handler(client, message):
         for cookie_name, stats in cookie_stats.items():
             stats_text += f"• {cookie_name}: {stats['usage_count']} استخدام، {stats['error_count']} أخطاء\n"
         
-        await message.reply_text(stats_text)
-        
-    except Exception as e:
+                 await message.reply_text(stats_text)
+         
+     except Exception as e:
          print(f"❌ خطأ في عرض الإحصائيات: {e}")
 
 # أوامر إدارية إضافية
